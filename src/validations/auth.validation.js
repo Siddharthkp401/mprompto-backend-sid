@@ -69,7 +69,7 @@ const sendOtp = {
 const verifyOtp = {
   body: Joi.object().keys({
     mobile_number: Joi.number().integer().min(10 ** 9).max(10 ** 10 - 1),
-    otp: Joi.number().required().max(6).min(6)
+    otp: Joi.number().required().min(6)
   })
 }
 
