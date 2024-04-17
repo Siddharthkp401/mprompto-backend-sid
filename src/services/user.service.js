@@ -1,6 +1,24 @@
 const httpStatus = require('http-status');
-const { User } = require('../models');
+const { User, TempUser } = require('../models');
 const ApiError = require('../utils/ApiError');
+
+
+/**
+ * Create a user in TempUser table
+ * @param {Object} userBody
+ * @returns {Promise<User>}
+ */
+const createTempUser = async (userBody) => {
+  if (await TempUser.isEmailTaken(userBody.email)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+
+  if (await TempUser.isMobileNumberTaken(userBody.mobile_number)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Mobile Number already taken');
+  }
+  return TempUser.create(userBody);
+};
+
 
 /**
  * Create a user
@@ -10,6 +28,10 @@ const ApiError = require('../utils/ApiError');
 const createUser = async (userBody) => {
   if (await User.isEmailTaken(userBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+
+  if (await User.isMobileNumberTaken(userBody.mobile_number)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Mobile Number already taken');
   }
   return User.create(userBody);
 };
@@ -35,6 +57,14 @@ const queryUsers = async (filter, options) => {
  */
 const getUserById = async (id) => {
   return User.findById(id);
+};
+/**
+ * Get Temp user by id
+ * @param {ObjectId} id
+ * @returns {Promise<User>}
+ */
+const getTempUserById = async (id) => {
+  return TempUser.findById(id);
 };
 
 /**
@@ -66,6 +96,20 @@ const updateUserById = async (userId, updateBody) => {
 };
 
 /**
+ * Update Temp user by id
+ * @param {ObjectId} userId
+ * @param {Object} updateBody
+ * @returns {Promise<User>}
+ */
+const updateTempUserById = async (userId, updateBody) => {
+  const user = await getTempUserById(userId);
+  Object.assign(user, updateBody);
+  await user.save();
+  return user;
+};
+
+
+/**
  * Delete user by id
  * @param {ObjectId} userId
  * @returns {Promise<User>}
@@ -80,10 +124,13 @@ const deleteUserById = async (userId) => {
 };
 
 module.exports = {
+  createTempUser,
   createUser,
   queryUsers,
   getUserById,
+  getTempUserById,
   getUserByEmail,
   updateUserById,
+  updateTempUserById,
   deleteUserById,
 };

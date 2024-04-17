@@ -1,7 +1,8 @@
 const httpStatus = require('http-status');
 const tokenService = require('./token.service');
 const userService = require('./user.service');
-const Token = require('../models/token.model');
+const companyService = require('./company.service');
+const Token = require('../models/otp.model');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 
@@ -11,9 +12,16 @@ const { tokenTypes } = require('../config/tokens');
  * @param {string} password
  * @returns {Promise<User>}
  */
-const loginUserWithEmailAndPassword = async (email, password) => {
-  const user = await userService.getUserByEmail(email);
-  if (!user || !(await user.isPasswordMatch(password))) {
+const loginUserWithEmailAndPassword = async (body) => {
+
+if(body.social_login_id && body.login_with){
+
+  //fetch user data from selected app
+}
+
+  const user = await userService.getUserByEmail(body.email);
+
+  if (!user || !(await user.isPasswordMatch(body.password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
   return user;
@@ -79,12 +87,42 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
 const verifyEmail = async (verifyEmailToken) => {
   try {
     const verifyEmailTokenDoc = await tokenService.verifyToken(verifyEmailToken, tokenTypes.VERIFY_EMAIL);
-    const user = await userService.getUserById(verifyEmailTokenDoc.user);
+    const user = await userService.getTempUserById(verifyEmailTokenDoc.user);
     if (!user) {
       throw new Error();
     }
-    await Token.deleteMany({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
-    await userService.updateUserById(user.id, { isEmailVerified: true });
+    await Token.deleteMany({ user_id: user._id, type: tokenTypes.VERIFY_EMAIL });
+
+    // update temp user table with email verified true
+    await userService.updateTempUserById(user._id, { email_verified: true });
+
+    // make user table entry
+    let userObj = {
+      fullname: user.fullname,
+      email: user.email,
+      mobile_number: user.mobile_number,
+      password: user.password,
+      email_verified: true,
+    }
+    let postUser = await userService.createUser(userObj)
+    if (!postUser) {
+      throw ApiError('User create failed')
+    }
+
+    // make company table entry
+    let companyObj = {
+      user_id: user._id,
+      company_name: user.company_name,
+      min_company_size: user.min_company_size,
+      max_company_size: user.max_company_size,
+      company_website: user.company_website,
+    }
+    let postComapny = await companyService.createCompany(companyObj)
+    if (!postComapny) {
+      throw ApiError('Post Company failed')
+    }
+
+
   } catch (error) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Email verification failed');
   }

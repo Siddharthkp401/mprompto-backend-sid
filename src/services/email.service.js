@@ -50,9 +50,12 @@ const sendVerificationEmail = async (to, token) => {
   // replace this url with the link to the email verification page of your front-end app
   const verificationEmailUrl = `http://link-to-app/verify-email?token=${token}`;
   const text = `Dear user,
-To verify your email, click on this link: ${verificationEmailUrl}
-If you did not create an account, then ignore this email.`;
-  await sendEmail(to, subject, text);
+  To verify your email, click on this link: ${verificationEmailUrl}
+  If you did not create an account, then ignore this email.`;
+
+  // const text = `Dear user, 
+  // Your Email verification OTP is : ${otp}`
+  return await sendEmail(to, subject, text);
 };
 
 module.exports = {

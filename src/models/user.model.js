@@ -6,14 +6,14 @@ const { roles } = require('../config/roles');
 
 const userSchema = mongoose.Schema(
   {
-    name: {
+    fullname: {
       type: String,
       required: true,
       trim: true,
     },
     email: {
       type: String,
-      required: true,
+      required: [true, 'Email is required'],
       unique: true,
       trim: true,
       lowercase: true,
@@ -23,11 +23,17 @@ const userSchema = mongoose.Schema(
         }
       },
     },
+    mobile_number: {
+      type: Number,
+      required: [true, 'Mobile number is required'],
+      unique: true,
+
+    },
     password: {
       type: String,
       required: true,
       trim: true,
-      minlength: 8,
+      // minlength: 8,
       validate(value) {
         if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
           throw new Error('Password must contain at least one letter and one number');
@@ -35,14 +41,34 @@ const userSchema = mongoose.Schema(
       },
       private: true, // used by the toJSON plugin
     },
-    role: {
+    social_login_id: {
       type: String,
-      enum: roles,
-      default: 'user',
+      default: null
     },
-    isEmailVerified: {
+    login_with: {
+      type: String,
+      default: 'default',
+      enum: ['facebook', 'google', 'default']
+    },
+    user_question_answers: {
+      type: [Object],
+      default: []
+    },
+    email_verified: {
       type: Boolean,
       default: false,
+    },
+    otp_verified: {
+      type: Boolean,
+      default: false,
+    },
+    is_deleted: {
+      type: Boolean,
+      default: false,
+    },
+    deleted_at: {
+      type: Date,
+      default: null,
     },
   },
   {
@@ -65,6 +91,11 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
   return !!user;
 };
 
+userSchema.statics.isMobileNumberTaken = async function (mobile_number, excludeUserId) {
+  const user = await this.findOne({ mobile_number, _id: { $ne: excludeUserId } });
+  return !!user;
+};
+
 /**
  * Check if password matches the user's password
  * @param {string} password
@@ -72,16 +103,17 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
  */
 userSchema.methods.isPasswordMatch = async function (password) {
   const user = this;
-  return bcrypt.compare(password, user.password);
+  let pass = bcrypt.compareSync(password, user.password);
+  return pass
 };
 
-userSchema.pre('save', async function (next) {
-  const user = this;
-  if (user.isModified('password')) {
-    user.password = await bcrypt.hash(user.password, 8);
-  }
-  next();
-});
+// userSchema.pre('save', async function (next) {
+//   const user = this;
+//   if (user.isModified('password')) {
+//     user.password = await bcrypt.hashSync(user.password, 8);
+//   }
+//   next();
+// });
 
 /**
  * @typedef User
