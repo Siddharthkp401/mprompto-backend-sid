@@ -3,9 +3,14 @@ const { password } = require('./custom.validation');
 
 const register = {
   body: Joi.object().keys({
+    fullname: Joi.string().required(),
     email: Joi.string().required().email(),
+    mobile_number: Joi.number().required().integer().min(10 ** 9).max(10 ** 10 - 1),
     password: Joi.string().required().custom(password),
-    name: Joi.string().required(),
+    company_name: Joi.string().required(),
+    min_company_size: Joi.number().required(),
+    max_company_size: Joi.number().required(),
+    company_website: Joi.string().required(),
   }),
 };
 
@@ -46,8 +51,28 @@ const resetPassword = {
 const verifyEmail = {
   query: Joi.object().keys({
     token: Joi.string().required(),
-  }),
+  })
+}
+
+const sendOtp = {
+  // query: Joi.object().keys({
+  //   token: Joi.string().required(),
+  // }),
+
+  body: Joi.object().keys({
+    email: Joi.string().email(),
+    mobile_number: Joi.number().integer().min(10 ** 9).max(10 ** 10 - 1),
+    otp: Joi.number().required().max(6).min(6)
+  })
 };
+
+const verifyOtp = {
+  body: Joi.object().keys({
+    mobile_number: Joi.number().integer().min(10 ** 9).max(10 ** 10 - 1),
+    otp: Joi.number().required().min(6)
+  })
+}
+
 
 module.exports = {
   register,
@@ -57,4 +82,6 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  verifyOtp,
+  sendOtp
 };
