@@ -1,4 +1,4 @@
-const { Company } = require('../models')
+import { Company } from '../models/index.js'
 
 
 /**
@@ -10,4 +10,4 @@ const createCompany = async (companyBody) => {
     return await Company.create(companyBody)
 }
 
-module.exports = {createCompany}
+export const companyService = { createCompany }

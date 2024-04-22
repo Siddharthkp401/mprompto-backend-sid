@@ -1,16 +1,16 @@
-const httpStatus = require('http-status');
-const catchAsync = require('../utils/catchAsync');
-const { authService, userService, tokenService, emailService } = require('../services');
-const { generateOtp } = require('../services/otpService');
-const { Otp, User, TempUser } = require('../models');
-const ApiError = require('../utils/ApiError');
-const { generateToken } = require('../services/token.service');
-const moment = require('moment');
-const config = require('../config/config');
-const { tokenTypes } = require('../config/tokens');
+import httpStatus from 'http-status';
+import catchAsync from '../utils/catchAsync.js';
+import { authService, userService, tokenService, emailService } from '../services/index.js';
+import { Otp, User, TempUser } from '../models/index.js';
+import ApiError  from '../utils/ApiError.js';
+import moment  from 'moment';
+import config from '../config/config.js';
+import tokenTypes from '../config/tokens.js';
+import GoogleStrategy from 'passport-google-oauth2';
+import generateOtp from '../services/otpService.js';
 
 
-const register = catchAsync(async (req, res) => {
+const register = catchAsync(async (req, res) =>{
   const tempUserData = await userService.createTempUser(req.body);
   // const tokens = await tokenService.generateAuthTokens(user);
   if (!tempUserData) {
@@ -54,9 +54,12 @@ const resetPassword = catchAsync(async (req, res) => {
 });
 
 const sendVerificationEmail = catchAsync(async (req, res) => {
-  const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.user);
 
-  await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
+  let tempUser = await TempUser.find({email: req.body.email})
+
+  const verifyEmailToken = await tokenService.generateVerifyEmailToken(tempUser);
+
+  await emailService.sendVerificationEmail(tempUser, verifyEmailToken);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
@@ -145,7 +148,26 @@ const verifyOtp = catchAsync(async (req, res) => {
 })
 
 
-module.exports = {
+//login with google
+
+const loginWithGoogle = async () => {
+  await passport.use(new GoogleStrategy({
+    clientID: config.googleAuth.client_id,
+    clientSecret: config.googleAuth.client_secret,
+    callbackURL: "http://127.0.0.1:3000/auth/google/callback",
+    passReqToCallback   : true
+  },
+  function(request, accessToken, refreshToken, profile, done) {
+    User.findOrCreate({ social_login_id: profile.id }, function (err, user) {
+      return done(err, user);
+    });
+  }
+));
+}
+
+
+
+export default {
   register,
   login,
   logout,
@@ -155,5 +177,6 @@ module.exports = {
   sendVerificationEmail,
   verifyEmail,
   sendOtp,
-  verifyOtp
+  verifyOtp,
+  loginWithGoogle
 };

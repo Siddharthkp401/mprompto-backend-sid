@@ -1,10 +1,10 @@
-const httpStatus = require('http-status');
-const tokenService = require('./token.service');
-const userService = require('./user.service');
-const companyService = require('./company.service');
-const Token = require('../models/otp.model');
-const ApiError = require('../utils/ApiError');
-const { tokenTypes } = require('../config/tokens');
+import httpStatus from 'http-status';
+import { tokenService } from './token.service.js';
+import { userService } from './user.service.js';
+import { companyService } from './company.service.js';
+import Token from '../models/otp.model.js';
+import ApiError from '../utils/ApiError.js';
+import tokenTypes from '../config/tokens.js';
 
 /**
  * Login with username and password
@@ -14,10 +14,10 @@ const { tokenTypes } = require('../config/tokens');
  */
 const loginUserWithEmailAndPassword = async (body) => {
 
-if(body.social_login_id && body.login_with){
+  if (body.social_login_id && body.login_with) {
 
-  //fetch user data from selected app
-}
+    //fetch user data from selected app
+  }
 
   const user = await userService.getUserByEmail(body.email);
 
@@ -128,7 +128,7 @@ const verifyEmail = async (verifyEmailToken) => {
   }
 };
 
-module.exports = {
+export const authService = {
   loginUserWithEmailAndPassword,
   logout,
   refreshAuth,

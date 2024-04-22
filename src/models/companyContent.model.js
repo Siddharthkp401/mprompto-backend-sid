@@ -1,8 +1,6 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const { toJSON, paginate } = require('./plugins');
-const { ref } = require('joi');
+import mongoose from 'mongoose';
+import validator from 'validator';
+import { toJSON, paginate } from './plugins/index';
 
 const companyContentSchema = new mongoose.Schema({
     company_id: {
@@ -67,4 +65,4 @@ companyContentSchema.plugin(paginate);
 
 const companyContent = mongoose.model('CompanyContent', companyContentSchema)
 
-module.exports = { companyContent }
+export default comapnyContent

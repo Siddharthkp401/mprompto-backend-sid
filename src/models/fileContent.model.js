@@ -1,5 +1,6 @@
-const { toJSON } = require('./plugins');
-const { mongoose } = require("../config/config");
+import mongoose from 'mongoose';
+import { toJSON } from './plugins/index.js';
+
 
 const fileContentSchema = new mongoose.Schema({
     company_content_id: {
@@ -42,4 +43,5 @@ fileContentSchema.plugin(paginate);
  */
 
 const fileContent = mongoose.model('fileContent', fileContentSchema)
-module.exports = fileContent;
+
+export default fileContent

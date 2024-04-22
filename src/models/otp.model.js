@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
-const { toJSON } = require('./plugins');
-// const { tokenTypes } = require('../config/tokens');
+import mongoose from "mongoose";
+import { toJSON } from './plugins/index.js';
 
 const otpSchema = mongoose.Schema(
   {
@@ -36,4 +35,4 @@ otpSchema.plugin(toJSON);
  */
 const Otp = mongoose.model('Otp', otpSchema);
 
-module.exports = Otp;
+export default Otp;

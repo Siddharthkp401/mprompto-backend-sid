@@ -1,13 +1,13 @@
-const Joi = require('joi');
-const { password, objectId } = require('./custom.validation');
+import Joi from 'joi';
+import { password, objectId } from './custom.validation.js';
 
 
 const createUser = {
   body: Joi.object().keys({
     fullname: Joi.string().required(),
     email: Joi.string().required().email(),
-    mobile_number: Joi.number().required().integer().min(10 ** 9).max(10 ** 10 - 1),
-    password: Joi.string().required().custom(password),
+    mobile_number: Joi.number().integer().min(10 ** 9).max(10 ** 10 - 1),
+    password: Joi.string().custom(password),
     user_question_answers: Joi.array(),
   }),
 };
@@ -48,7 +48,7 @@ const deleteUser = {
   }),
 };
 
-module.exports = {
+export default {
   createUser,
   getUsers,
   getUser,

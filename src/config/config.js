@@ -1,8 +1,8 @@
-const dotenv = require('dotenv');
-const path = require('path');
-const Joi = require('joi');
+import dotenv from 'dotenv';
+import path  from 'path';
+import Joi from 'joi';
 
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+dotenv.config();
 
 const envVarsSchema = Joi.object()
   .keys({
@@ -23,6 +23,8 @@ const envVarsSchema = Joi.object()
     SMTP_USERNAME: Joi.string().description('username for email server'),
     SMTP_PASSWORD: Joi.string().description('password for email server'),
     EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
+    GOOGLE_CLIENT_ID: Joi.string().description('google client id for login with google'),
+    GOOGLE_CLIENT_SECRET: Joi.string().description('google client secret key for login with google')
   })
   .unknown();
 
@@ -32,7 +34,7 @@ if (error) {
   throw new Error(`Config validation error: ${error.message}`);
 }
 
-module.exports = {
+export default {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   mongoose: {
@@ -62,4 +64,8 @@ module.exports = {
     },
     from: envVars.EMAIL_FROM,
   },
+  googleAuth : {
+    client_id: envVars.GOOGLE_CLIENT_ID,
+    client_secret: envVars.GOOGLE_CLIENT_SECRET
+  }
 };

@@ -1,5 +1,6 @@
-const { toJSON } = require('./plugins');
-const { mongoose } = require("../config/config");
+import mongoose from 'mongoose';
+import { toJSON } from './plugins';
+
 
 const urlContentSchema = new mongoose.Schema({
     title: {
@@ -34,4 +35,4 @@ urlContentSchema.plugin(paginate);
 
 const UrlContent = mongoose.model('UrlContent', urlContentSchema);
 
-module.exports = UrlContent;
+export default UrlContent;

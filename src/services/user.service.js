@@ -1,6 +1,6 @@
-const httpStatus = require('http-status');
-const { User, TempUser } = require('../models');
-const ApiError = require('../utils/ApiError');
+import httpStatus from 'http-status';
+import { User, TempUser } from '../models/index.js';
+import ApiError from '../utils/ApiError.js';
 
 
 /**
@@ -123,7 +123,7 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
-module.exports = {
+export const userService = {
   createTempUser,
   createUser,
   queryUsers,

@@ -1,8 +1,8 @@
-const httpStatus = require('http-status');
-const { Otp, User } = require('../models');
-const ApiError = require('../utils/ApiError');
-const config = require('../config/config');
-const emailService = require('./email.service')
+import httpStatus from 'http-status';
+import { Otp, User } from '../models/index.js';
+import ApiError from '../utils/ApiError.js';
+import config from '../config/config.js';
+import { emailService } from './email.service.js'
 // const AWS = require('aws-sdk');
 
 // const sns = new AWS.SNS()
@@ -66,4 +66,4 @@ const generateOtp = async (mobile_number, email) => {
 }
 
 
-module.exports = { generateOtp }
+export default generateOtp

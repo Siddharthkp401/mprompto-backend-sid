@@ -1,8 +1,6 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const { toJSON, paginate } = require('./plugins');
-const { roles } = require('../config/roles');
+import mongoose from 'mongoose';
+import validator from 'validator';
+import { toJSON, paginate } from './plugins/index.js';
 
 const companySchema = mongoose.Schema(
     {
@@ -44,5 +42,4 @@ companySchema.plugin(toJSON);
  * @typedef Company
  */
 const User = mongoose.model('Company', companySchema);
-
-module.exports = User;
+export default User

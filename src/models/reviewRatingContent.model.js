@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
-const { toJSON, paginate } = require('./plugins');
+import mongoose from 'mongoose';
+import { toJSON, paginate } from './plugins/index.js';
+
 
 
 const reviewRatingSchema = new mongoose.Schema({
@@ -29,4 +30,4 @@ reviewRatingSchema.plugin(paginate);
  */
 
 const reviewRating = mongoose.model('reviewRating', reviewRatingSchema)
-module.exports = { reviewRating }
+export default reviewRating

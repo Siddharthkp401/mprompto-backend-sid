@@ -1,5 +1,6 @@
-const { toJSON } = require('./plugins');
-const { mongoose } = require("../config/config");
+import mongoose from 'mongoose';
+import { toJSON } from './plugins/index.js';
+
 
 const faqContentSchema = new mongoose.Schema({
 
@@ -40,4 +41,5 @@ faqContentSchema.plugin(paginate);
  */
 
 const faqContent = mongoose.model('faqContent', faqContentSchema)
-module.exports = faqContent;
+
+export default faqContent
