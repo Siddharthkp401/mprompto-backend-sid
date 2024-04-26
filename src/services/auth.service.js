@@ -1,10 +1,10 @@
-const httpStatus = require('http-status');
-const tokenService = require('./token.service');
-const userService = require('./user.service');
-const companyService = require('./company.service');
-const Token = require('../models/otp.model');
-const ApiError = require('../utils/ApiError');
-const { tokenTypes } = require('../config/tokens');
+import httpStatus from 'http-status';
+import tokenService from './token.service.js';
+import userService from './user.service.js';
+import companyService from './company.service.js';
+import Token from '../models/otp.model.js';
+import ApiError from '../utils/ApiError.js';
+import tokenTypes from '../config/tokens.js';
 
 /**
  * Login with username and password
@@ -13,11 +13,9 @@ const { tokenTypes } = require('../config/tokens');
  * @returns {Promise<User>}
  */
 const loginUserWithEmailAndPassword = async (body) => {
-
-if(body.social_login_id && body.login_with){
-
-  //fetch user data from selected app
-}
+  if (body.social_login_id && body.login_with) {
+    // fetch user data from selected app
+  }
 
   const user = await userService.getUserByEmail(body.email);
 
@@ -87,48 +85,46 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
 const verifyEmail = async (verifyEmailToken) => {
   try {
     const verifyEmailTokenDoc = await tokenService.verifyToken(verifyEmailToken, tokenTypes.VERIFY_EMAIL);
-    const user = await userService.getTempUserById(verifyEmailTokenDoc.user);
-    if (!user) {
-      throw new Error();
+    const tempUser = await userService.getTempUserById(verifyEmailTokenDoc.user);
+    if (!tempUser) {
+      throw new Error('User not found!');
     }
-    await Token.deleteMany({ user_id: user._id, type: tokenTypes.VERIFY_EMAIL });
+    await Token.deleteMany({ user_id: tempUser._id, type: tokenTypes.VERIFY_EMAIL });
 
     // update temp user table with email verified true
-    await userService.updateTempUserById(user._id, { email_verified: true });
+    await userService.updateTempUserById(tempUser._id, { email_verified: true });
 
     // make user table entry
-    let userObj = {
-      fullname: user.fullname,
-      email: user.email,
-      mobile_number: user.mobile_number,
-      password: user.password,
+    const userObj = {
+      fullname: tempUser.fullname,
+      email: tempUser.email,
+      mobile_number: tempUser.mobile_number,
+      password: tempUser.password,
       email_verified: true,
-    }
-    let postUser = await userService.createUser(userObj)
+    };
+    const postUser = await userService.createUser(userObj);
     if (!postUser) {
-      throw ApiError('User create failed')
+      throw ApiError('User create failed');
     }
 
     // make company table entry
-    let companyObj = {
-      user_id: user._id,
-      company_name: user.company_name,
-      min_company_size: user.min_company_size,
-      max_company_size: user.max_company_size,
-      company_website: user.company_website,
-    }
-    let postComapny = await companyService.createCompany(companyObj)
+    const companyObj = {
+      user_id: postUser._id,
+      company_name: tempUser.company_name,
+      min_company_size: tempUser.min_company_size,
+      max_company_size: tempUser.max_company_size,
+      company_website: tempUser.company_website,
+    };
+    const postComapny = await companyService.createCompany(companyObj);
     if (!postComapny) {
-      throw ApiError('Post Company failed')
+      throw ApiError('Post Company failed');
     }
-
-
   } catch (error) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Email verification failed');
   }
 };
 
-module.exports = {
+export default {
   loginUserWithEmailAndPassword,
   logout,
   refreshAuth,

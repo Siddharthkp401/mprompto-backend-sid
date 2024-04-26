@@ -1,8 +1,5 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const { toJSON, paginate } = require('./plugins');
-const { roles } = require('../config/roles');
+import mongoose from "mongoose";
+import { toJSON, paginate } from './plugins/index.js';
 
 const notificationSchema = mongoose.Schema(
     {
@@ -35,6 +32,6 @@ notificationSchema.plugin(paginate);
 /**
  * @typedef Notification
  */
-const User = mongoose.model('Notification', notificationSchema);
+const Notification = mongoose.model('Notification', notificationSchema);
 
-module.exports = User;
+export default Notification

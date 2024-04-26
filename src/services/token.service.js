@@ -1,35 +1,34 @@
-const jwt = require('jsonwebtoken');
-const moment = require('moment');
-const httpStatus = require('http-status');
-const config = require('../config/config');
-const userService = require('./user.service');
-const { Token } = require('../models');
-const ApiError = require('../utils/ApiError');
-const { tokenTypes } = require('../config/tokens');
+import jwt from 'jsonwebtoken';
+import moment from 'moment';
+import httpStatus from 'http-status';
+import config from '../config/config.js';
+import userService from './user.service.js';
+import { Token } from '../models/index.js';
+import ApiError from '../utils/ApiError.js';
+import tokenTypes from '../config/tokens.js';
 
 /**
  * Generate token
- * @param {ObjectId} userId
+ * @param {Object_id} user_id
  * @param {Moment} expires
  * @param {string} type
  * @param {string} [secret]
  * @returns {string}
  */
-const generateToken = ( userId , expires,  type,  secret = config.jwt.secret) => {
+const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
   const payload = {
     sub: userId,
-    iat: moment().unix(), 
+    iat: moment().unix(),
     exp: expires.unix(),
     type,
   };
   return jwt.sign(payload, secret);
-   
 };
 
 /**
  * Save a token
  * @param {string} token
- * @param {ObjectId} userId
+ * @param {Object_id} user_id
  * @param {Moment} expires
  * @param {string} type
  * @param {boolean} [blacklisted]
@@ -47,14 +46,14 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
 };
 
 /**
- * Verify token and return token doc (or throw an error if it is not valid)
+ * Verify token and return token doc (or throw an error if it is not val_id)
  * @param {string} token
  * @param {string} type
  * @returns {Promise<Token>}
  */
 const verifyToken = async (token, type) => {
   const payload = jwt.verify(token, config.jwt.secret);
-  
+
   const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false });
   if (!tokenDoc) {
     throw new Error('Token not found');
@@ -69,11 +68,11 @@ const verifyToken = async (token, type) => {
  */
 const generateAuthTokens = async (user) => {
   const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
-  const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS);
+  const accessToken = generateToken(user._id, accessTokenExpires, tokenTypes.ACCESS);
 
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  const refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH);
-  await saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH);
+  const refreshToken = generateToken(user._id, refreshTokenExpires, tokenTypes.REFRESH);
+  await saveToken(refreshToken, user._id, refreshTokenExpires, tokenTypes.REFRESH);
 
   return {
     access: {
@@ -98,8 +97,8 @@ const generateResetPasswordToken = async (email) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'No users found with this email');
   }
   const expires = moment().add(config.jwt.resetPasswordExpirationMinutes, 'minutes');
-  const resetPasswordToken = generateToken(user.id, expires, tokenTypes.RESET_PASSWORD);
-  await saveToken(resetPasswordToken, user.id, expires, tokenTypes.RESET_PASSWORD);
+  const resetPasswordToken = generateToken(user._id, expires, tokenTypes.RESET_PASSWORD);
+  await saveToken(resetPasswordToken, user._id, expires, tokenTypes.RESET_PASSWORD);
   return resetPasswordToken;
 };
 
@@ -110,12 +109,12 @@ const generateResetPasswordToken = async (email) => {
  */
 const generateVerifyEmailToken = async (user) => {
   const expires = moment().add(config.jwt.verifyEmailExpirationMinutes, 'minutes');
-  const verifyEmailToken = generateToken(user.id, expires, tokenTypes.VERIFY_EMAIL);
-  await saveToken(verifyEmailToken, user.id, expires, tokenTypes.VERIFY_EMAIL);
+  const verifyEmailToken = generateToken(user._id, expires, tokenTypes.VERIFY_EMAIL);
+  await saveToken(verifyEmailToken, user._id, expires, tokenTypes.VERIFY_EMAIL);
   return verifyEmailToken;
 };
 
-module.exports = {
+export default {
   generateToken,
   saveToken,
   verifyToken,

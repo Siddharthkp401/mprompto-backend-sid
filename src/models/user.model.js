@@ -1,8 +1,7 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const { toJSON, paginate } = require('./plugins');
-const { roles } = require('../config/roles');
+import mongoose from 'mongoose';
+import validator from 'validator';
+import bcrypt from 'bcryptjs';
+import { toJSON, paginate } from './plugins/index.js';
 
 const userSchema = mongoose.Schema(
   {
@@ -25,13 +24,13 @@ const userSchema = mongoose.Schema(
     },
     mobile_number: {
       type: Number,
-      required: [true, 'Mobile number is required'],
+      // required: [true, 'Mobile number is required'],
       unique: true,
 
     },
     password: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
       // minlength: 8,
       validate(value) {
@@ -120,4 +119,4 @@ userSchema.methods.isPasswordMatch = async function (password) {
  */
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+export default User;

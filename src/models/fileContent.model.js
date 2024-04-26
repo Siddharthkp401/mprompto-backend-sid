@@ -1,45 +1,45 @@
-const { toJSON } = require('./plugins');
-const { mongoose } = require("../config/config");
+import mongoose from 'mongoose';
+import { toJSON, paginate } from './plugins/index.js';
 
-const fileContentSchema = new mongoose.Schema({
+const fileContentSchema = new mongoose.Schema(
+  {
     company_content_id: {
-        type: mongoose.Types.ObjectId,
-        ref: 'CompanyContent'
+      type: mongoose.Types.ObjectId,
+      ref: 'CompanyContent',
     },
     title: {
-        type: String
+      type: String,
     },
     filename: {
-        type: String
+      type: String,
     },
     filepath: {
-        type: String
+      type: String,
     },
-    filesize:{
-        type: Number
+    filesize: {
+      type: Number,
     },
     is_deleted: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
     deleted_at: {
-        type: Date,
-        default: null,
+      type: Date,
+      default: null,
     },
-},
-    {
-        timestamps: true,
-
-    })
-
+  },
+  {
+    timestamps: true,
+  }
+);
 
 fileContentSchema.plugin(toJSON);
 fileContentSchema.plugin(paginate);
-
 
 /**
  * @typedef fileContent
  */
 
-const fileContent = mongoose.model('fileContent', fileContentSchema)
-module.exports = fileContent;
+const FileContent = mongoose.model('fileContent', fileContentSchema);
+
+export default FileContent;

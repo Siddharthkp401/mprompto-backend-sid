@@ -1,6 +1,6 @@
-const nodemailer = require('nodemailer');
-const config = require('../config/config');
-const logger = require('../config/logger');
+import nodemailer from 'nodemailer';
+import config from '../config/config.js';
+import logger from '../config/logger.js';
 
 const transport = nodemailer.createTransport(config.email.smtp);
 /* istanbul ignore next */
@@ -53,12 +53,12 @@ const sendVerificationEmail = async (to, token) => {
   To verify your email, click on this link: ${verificationEmailUrl}
   If you did not create an account, then ignore this email.`;
 
-  // const text = `Dear user, 
+  // const text = `Dear user,
   // Your Email verification OTP is : ${otp}`
-  return await sendEmail(to, subject, text);
+  return sendEmail(to, subject, text);
 };
 
-module.exports = {
+export default {
   transport,
   sendEmail,
   sendResetPasswordEmail,

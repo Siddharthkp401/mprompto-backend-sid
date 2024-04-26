@@ -1,43 +1,42 @@
-const { toJSON } = require('./plugins');
-const { mongoose } = require("../config/config");
+import mongoose from 'mongoose';
+import { paginate, toJSON } from './plugins/index.js';
 
-const faqContentSchema = new mongoose.Schema({
-
+const faqContentSchema = new mongoose.Schema(
+  {
     company_content_id: {
-        type: mongoose.Types.ObjectId,
-        ref: 'CompanyContent'
+      type: mongoose.Types.ObjectId,
+      ref: 'CompanyContent',
     },
     title: {
-        type: String
+      type: String,
     },
     question: {
-        type: String
+      type: String,
     },
     answer: {
-        type: String
+      type: String,
     },
     is_deleted: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
     deleted_at: {
-        type: Date,
-        default: null,
+      type: Date,
+      default: null,
     },
-},
-    {
-        timestamps: true,
-
-    })
-
+  },
+  {
+    timestamps: true,
+  }
+);
 
 faqContentSchema.plugin(toJSON);
 faqContentSchema.plugin(paginate);
-
 
 /**
  * @typedef faqContent
  */
 
-const faqContent = mongoose.model('faqContent', faqContentSchema)
-module.exports = faqContent;
+const FaqContent = mongoose.model('faqContent', faqContentSchema);
+
+export default FaqContent;

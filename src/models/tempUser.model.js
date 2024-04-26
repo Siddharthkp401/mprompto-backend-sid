@@ -1,8 +1,10 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const { toJSON, paginate } = require('./plugins');
-const { roles } = require('../config/roles');
+import mongoose from 'mongoose';
+import validator from 'validator';
+import bcrypt from 'bcryptjs';
+import toJSON from './plugins/toJSON.plugin.js';
+import paginate from './plugins/paginate.plugin.js';
+
+
 
 const tempUserSchema = mongoose.Schema(
     {
@@ -100,7 +102,7 @@ tempUserSchema.statics.isEmailTaken = async function (email, excludeUserId) {
 tempUserSchema.statics.isMobileNumberTaken = async function (mobile_number, excludeUserId) {
     const user = await this.findOne({ mobile_number, _id: { $ne: excludeUserId }, email_verified: false });
     return !!user;
-  };
+};
 
 /**
  * Check if password matches the user's password
@@ -125,4 +127,4 @@ tempUserSchema.pre('save', async function (next) {
  */
 const TempUser = mongoose.model('TempUser', tempUserSchema);
 
-module.exports = TempUser;
+export default TempUser;

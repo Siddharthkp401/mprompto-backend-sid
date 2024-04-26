@@ -1,8 +1,11 @@
-const express = require('express');
-const authRoute = require('./auth.route');
-const userRoute = require('./user.route');
-const docsRoute = require('./docs.route');
-const config = require('../../config/config');
+import express from 'express';
+import authRoute from './auth.route.js';
+import userRoute from './user.route.js';
+import docsRoute from './docs.route.js';
+import config from '../../config/config.js';
+import fileContentRoute from './fileContent.route.js';
+import urlContentRoute from './urlContent.route.js';
+import companyContentRoute from './companyContent.route.js';
 
 const router = express.Router();
 
@@ -14,6 +17,18 @@ const defaultRoutes = [
   {
     path: '/users',
     route: userRoute,
+  },
+  {
+    path: '/file-content',
+    route: fileContentRoute,
+  },
+  {
+    path: '/url-content',
+    route: urlContentRoute,
+  },
+  {
+    path: '/company-content',
+    route: companyContentRoute,
   },
 ];
 
@@ -36,4 +51,4 @@ if (config.env === 'development') {
   });
 }
 
-module.exports = router;
+export default router;
