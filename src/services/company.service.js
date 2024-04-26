@@ -1,5 +1,4 @@
-import { Company } from '../models/index.js'
-
+import { Company } from '../models/index.js';
 
 /**
  * Create a user in TempUser table
@@ -7,7 +6,11 @@ import { Company } from '../models/index.js'
  * @returns {Promise<Company>}
  */
 const createCompany = async (companyBody) => {
-    return await Company.create(companyBody)
-}
+  return Company.create(companyBody);
+};
 
-export const companyService = { createCompany }
+const fetchUserCompany = async (userId) => {
+  return Company.findOne({ user_id: userId });
+};
+
+export default { createCompany, fetchUserCompany };

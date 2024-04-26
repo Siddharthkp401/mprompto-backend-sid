@@ -2,7 +2,6 @@ import httpStatus from 'http-status';
 import { User, TempUser } from '../models/index.js';
 import ApiError from '../utils/ApiError.js';
 
-
 /**
  * Create a user in TempUser table
  * @param {Object} userBody
@@ -18,7 +17,6 @@ const createTempUser = async (userBody) => {
   }
   return TempUser.create(userBody);
 };
-
 
 /**
  * Create a user
@@ -108,7 +106,6 @@ const updateTempUserById = async (userId, updateBody) => {
   return user;
 };
 
-
 /**
  * Delete user by id
  * @param {ObjectId} userId
@@ -123,7 +120,7 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
-export const userService = {
+export default {
   createTempUser,
   createUser,
   queryUsers,

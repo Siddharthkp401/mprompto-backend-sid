@@ -1,30 +1,34 @@
 import mongoose from 'mongoose';
-import { toJSON } from './plugins';
+import { toJSON, paginate } from './plugins/index.js';
 
-
-const urlContentSchema = new mongoose.Schema({
+const urlContentSchema = new mongoose.Schema(
+  {
     title: {
-        type: String
+      type: String,
     },
     company_content_id: {
-        type: mongoose.Types.ObjectId,
-        ref: 'CompanyContent'
+      type: mongoose.Types.ObjectId,
+      ref: 'CompanyContent',
     },
     content_url: {
-        type: String
+      type: String,
     },
     is_deleted: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
+    },
+    parent_url: {
+      type: Boolean,
     },
     deleted_at: {
-        type: Date,
-        default: null,
+      type: Date,
+      default: null,
     },
-},
-    {
-        timestamps: true,
-    })
+  },
+  {
+    timestamps: true,
+  }
+);
 
 urlContentSchema.plugin(toJSON);
 urlContentSchema.plugin(paginate);

@@ -53,12 +53,12 @@ const sendVerificationEmail = async (to, token) => {
   To verify your email, click on this link: ${verificationEmailUrl}
   If you did not create an account, then ignore this email.`;
 
-  // const text = `Dear user, 
+  // const text = `Dear user,
   // Your Email verification OTP is : ${otp}`
-  return await sendEmail(to, subject, text);
+  return sendEmail(to, subject, text);
 };
 
-export const emailService = {
+export default {
   transport,
   sendEmail,
   sendResetPasswordEmail,
