@@ -41,6 +41,10 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
+// sotre file 
+app.use('/src/temp', express.static('src/temp'))
+
+
 // jwt authentication
 app.use(passport.initialize());
 app.use(passport.session());
