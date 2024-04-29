@@ -9,25 +9,20 @@ import companyContentService from './companyContent.service.js';
  * @returns {Promise<fileContent>}
  */
 
-const uploadFile = async (obj, file) => {
-  const companyContentObj = {
-    company_id: obj.company_id,
-    content_type: 2,
-    language: obj.language,
-  };
-  const companyContent = await companyContentService.uploadContent(companyContentObj);
+const uploadFile = async (reqData, file) => {
 
-  if (!companyContent) {
-    throw new ApiError('Error while posting company content!');
-  }
+  // const fileObj = {
+  //   company_content_id: companyContent._id,
+  //   title: file.originalname,
+  //   filename: file.originalname,
+  //   filepath: file.location,
+  //   filesize: file.size,
+  // };
 
   const fileObj = {
-    company_content_id: companyContent._id,
-    title: file.originalname,
-    filename: file.originalname,
-    filepath: file.location,
-    filesize: file.size,
-  };
+    company_content_id: reqData.company_content_id,
+    filepath: `http://localhost:3000/src/temp/${file}`
+  }
 
   const uploadFileContent = await FileContent.create(fileObj);
 
@@ -35,7 +30,7 @@ const uploadFile = async (obj, file) => {
     throw new ApiError('Error uploading file!');
   }
 
-  return uploadFile;
+  return uploadFileContent;
 };
 
 export default { uploadFile };
