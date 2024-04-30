@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import { companyService, fileContentService, urlServices } from '../services/index.js';
 import catchAsync from '../utils/catchAsync.js';
 import companyContentService from '../services/companyContent.service.js';
+import pick from '../utils/pick.js';
 
 // post company content (external url / file / F&Q / review & rating)
 const postCompanyContent = catchAsync(async (req, res) => {
@@ -32,7 +33,7 @@ const postCompanyContent = catchAsync(async (req, res) => {
         resultData.resolved = companyContent.resolved,
         resultData.company_id = companyContent.company_id,
         resultData.content_type = companyContent.content_type
-        resultData.content_url = urlData.content_url,
+        resultData.content = urlData.content_url,
         resultData.content_id = urlData._id
 
         res.status(httpStatus.OK).send({ success: false, message: 'Post Content url successfull!', data: resultData });
@@ -57,7 +58,7 @@ const postCompanyContent = catchAsync(async (req, res) => {
             resultData.resolved = companyContent.resolved,
             resultData.company_id = companyContent.company_id,
             resultData.content_type = companyContent.content_type
-            resultData.filepath = storeData.filepath,
+            resultData.content = storeData.filepath,
             resultData.content_id = storeData._id
             
             res.status(httpStatus.OK).send({ success: true, message: 'File uploaded successfully!', data: resultData });
@@ -79,11 +80,11 @@ const getCompanyContent = catchAsync(async (req, res) => {
     const userCompany = await companyService.fetchUserCompany(req.user._id);
 
     // const companyContentId = await companyContentService
+    const filter = pick(req.query, ["name"]);
+    const options = pick(req.query, ["sortBy", "limit", "page"]);
 
-    const companyContentData = await companyContentService.getAllCompanyContent(userCompany._id)
+    const companyContentData = await companyContentService.getAllCompanyContent(userCompany._id, filter, options)
     res.send(companyContentData)
-
-
 })
 
 
