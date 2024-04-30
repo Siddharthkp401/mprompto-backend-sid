@@ -5,6 +5,8 @@ const urlContentSchema = new mongoose.Schema(
   {
     title: {
       type: String,
+      default: 'title',
+
     },
     company_content_id: {
       type: mongoose.Types.ObjectId,

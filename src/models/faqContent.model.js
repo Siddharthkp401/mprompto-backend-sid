@@ -9,6 +9,7 @@ const faqContentSchema = new mongoose.Schema(
     },
     title: {
       type: String,
+      default: 'title',
     },
     question: {
       type: String,

@@ -9,6 +9,8 @@ const fileContentSchema = new mongoose.Schema(
     },
     title: {
       type: String,
+      default: 'title',
+
     },
     filename: {
       type: String,

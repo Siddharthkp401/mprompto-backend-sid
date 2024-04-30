@@ -1,3 +1,4 @@
+
 /* eslint-disable no-param-reassign */
 
 const paginate = (schema) => {
@@ -19,7 +20,7 @@ const paginate = (schema) => {
    * @param {number} [options.page] - Current page (default = 1)
    * @returns {Promise<QueryResult>}
    */
-  schema.statics.paginate = async function (filter, options) {
+  schema.statics.paginate = async function (filter, options, resultData) {
     let sort = '';
     if (options.sortBy) {
       const sortingCriteria = [];
@@ -36,8 +37,18 @@ const paginate = (schema) => {
     const page = options.page && parseInt(options.page, 10) > 0 ? parseInt(options.page, 10) : 1;
     const skip = (page - 1) * limit;
 
-    const countPromise = this.countDocuments(filter).exec();
-    let docsPromise = this.find(filter).sort(sort).skip(skip).limit(limit);
+    let countPromise
+    let docsPromise
+    if (resultData) {
+      sort = 'content_type'
+      docsPromise = resultData.slice(skip, limit + skip)
+      countPromise = resultData.length
+
+    } else {
+      docsPromise = this.find(filter).sort(sort).skip(skip).limit(limit);
+      docsPromise = docsPromise.exec();
+
+    }
 
     if (options.populate) {
       options.populate.split(',').forEach((populateOption) => {
@@ -50,7 +61,6 @@ const paginate = (schema) => {
       });
     }
 
-    docsPromise = docsPromise.exec();
 
     return Promise.all([countPromise, docsPromise]).then((values) => {
       const [totalResults, results] = values;
