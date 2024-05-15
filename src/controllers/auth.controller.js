@@ -11,7 +11,7 @@ import generateOtp from '../services/otpService.js';
 import { sendSMS } from '../helper/helper-function.js'
 
 
-const register = catchAsync(async (req, res) => {
+const signIn = catchAsync(async (req, res) => {
 
   //find from user table
   if (await User.findOne({ email: req.body.email })) {
@@ -27,9 +27,9 @@ const register = catchAsync(async (req, res) => {
       return res.status(httpStatus.BAD_REQUEST).send({ success: false, message: 'User registration failed', data: [] })
     }
     await sendOtp(req.body.email)
-    return await res.status(httpStatus.CREATED).send({
-      success: false, message: 'Please check your mail for OTP!', data: tempUserData
-    });
+      return await res.status(httpStatus.CREATED).send({
+        success: false, message: 'Please check your mail for OTP!', data: tempUserData
+      });
 
   }
 });
@@ -68,10 +68,7 @@ const sendOtp = catchAsync(async (email) => {
   if (!mailSuccess) {
     throw Error('Error in sending mail!')
   }
-
-  // }else{
-
-  // }
+return mailSuccess
 
 })
 
@@ -82,7 +79,7 @@ const verifyOtp = catchAsync(async (req, res) => {
 
   if (email) {
     otpExist = await Otp.findOne({ email: req.body.email, otp: otp, expires_at: { $gte: new Date() } }).lean()
-      .sort({ date: -1 });
+    .sort({ date: -1 });
   }
 
   if (!otpExist) {
@@ -90,25 +87,33 @@ const verifyOtp = catchAsync(async (req, res) => {
   }
   let tempUser = await TempUser.findOne({ email: email })
 
-  // make user table entry
-  const userObj = {
-    // fullname: tempUser.fullname,
-    email: tempUser.email,
-    // mobile_number: tempUser.mobile_number,
-    // otp_verified: true,
-  };
- let postUser = await userService.createUser(userObj);
+  let userExist = await userService.getUserByEmail(email)
+  let postUser;
+  if (!userExist) {
 
-  // make company table entry
-  const companyObj = {
-    user_id: postUser._id,
-    // company_name: tempUser.company_name
-  };
-  await companyService.createCompany(companyObj);
+    // make user table entry
+    const userObj = {
+      // fullname: tempUser.fullname,
+      email: tempUser.email,
+      // mobile_number: tempUser.mobile_number,
+      // otp_verified: true,
+    };
+    postUser = await userService.createUser(userObj);
+    await userService.deleteTempUserByEmail(email)
+
+    // make company table entry
+    const companyObj = {
+      user_id: postUser._id,
+      // company_name: tempUser.company_name
+    };
+    await companyService.createCompany(companyObj);
+
+  }
+
 
 
   const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  const userToken = tokenService.generateToken(postUser._id, expires, tokenTypes.REFRESH);
+  const userToken = await tokenService.generateToken(userExist ? userExist._id : postUser._id, expires);
   res.status(httpStatus.OK).send({ success: true, message: 'Otp verified successfully', data: { token: userToken } })
 
 })
@@ -198,7 +203,7 @@ const loginWithGoogle = async () => {
 }
 
 export default {
-  register,
+  signIn,
   login,
   logout,
   refreshTokens,

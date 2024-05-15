@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { password } from './custom.validation.js';
 
-const register = {
+const signIn = {
   body: Joi.object().keys({
     fullname: Joi.string(),
     email: Joi.string().required().email(),
@@ -83,7 +83,7 @@ const verifyOtp = {
 };
 
 export default {
-  register,
+  signIn,
   login,
   logout,
   refreshTokens,

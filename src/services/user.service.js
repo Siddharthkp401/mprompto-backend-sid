@@ -140,6 +140,17 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+
+/**
+ * Delete user by id
+ * @param {email} email
+ * @returns {Promise<User>}
+ */
+const deleteTempUserByEmail = async (email) => {
+  const user = await TempUser.findOneAndDelete({email:email});
+  return true;
+};
+
 export default {
   createTempUser,
   createUser,
@@ -150,4 +161,5 @@ export default {
   updateUserById,
   updateTempUserById,
   deleteUserById,
+  deleteTempUserByEmail
 };
