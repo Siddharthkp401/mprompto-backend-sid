@@ -85,7 +85,7 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
 const verifyEmail = async (verifyEmailToken) => {
   try {
     const verifyEmailTokenDoc = await tokenService.verifyToken(verifyEmailToken, tokenTypes.VERIFY_EMAIL);
-    const tempUser = await userService.getTempUserById(verifyEmailTokenDoc.user);
+    const tempUser = await userService.getTempUserById(verifyEmailTokenDoc.temp_user);
     if (!tempUser) {
       throw new Error('User not found!');
     }
@@ -94,7 +94,7 @@ const verifyEmail = async (verifyEmailToken) => {
     // update temp user table with email verified true
     await userService.updateTempUserById(tempUser._id, { email_verified: true });
 
-    // make user table entry
+      // make user table entry
     const userObj = {
       fullname: tempUser.fullname,
       email: tempUser.email,

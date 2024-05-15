@@ -20,7 +20,8 @@ if (config.env !== 'test') {
  */
 const sendEmail = async (to, subject, text) => {
   const msg = { from: config.email.from, to, subject, text };
-  await transport.sendMail(msg);
+  let sentMail = await transport.sendMail(msg);
+  return sentMail;
 };
 
 /**
@@ -55,7 +56,7 @@ const sendVerificationEmail = async (to, token) => {
 
   // const text = `Dear user,
   // Your Email verification OTP is : ${otp}`
-  return sendEmail(to, subject, text);
+  return sendEmail(to.trimRight(), subject, text);
 };
 
 export default {

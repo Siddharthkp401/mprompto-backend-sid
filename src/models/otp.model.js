@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 import { toJSON } from './plugins/index.js';
 
 const otpSchema = mongoose.Schema(
@@ -11,7 +11,7 @@ const otpSchema = mongoose.Schema(
       type: Number,
     },
     email: {
-      type: String
+      type: String,
     },
 
     otp: {
@@ -19,8 +19,8 @@ const otpSchema = mongoose.Schema(
     },
     expires_at: {
       type: Date,
-      required: true,
-    }
+      // required: true,
+    },
   },
   {
     timestamps: true,
