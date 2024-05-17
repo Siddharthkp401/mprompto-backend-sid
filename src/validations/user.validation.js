@@ -1,12 +1,14 @@
 import Joi from 'joi';
 import { password, objectId } from './custom.validation.js';
 
-
 const createUser = {
   body: Joi.object().keys({
     fullname: Joi.string().required(),
     email: Joi.string().required().email(),
-    mobile_number: Joi.number().integer().min(10 ** 9).max(10 ** 10 - 1),
+    mobile_number: Joi.number()
+      .integer()
+      .min(10 ** 9)
+      .max(10 ** 10 - 1),
     password: Joi.string().custom(password),
     user_question_answers: Joi.array(),
   }),
@@ -35,9 +37,16 @@ const updateUser = {
   }),
   body: Joi.object()
     .keys({
-      fullname: Joi.string().required(),
-      email: Joi.string().required().email(),
-      mobile_number: Joi.number().required().integer().min(10 ** 9).max(10 ** 10 - 1)
+      fullname: Joi.string(),
+      email: Joi.string().email(),
+      mobile_number: Joi.number()
+        .integer()
+        .min(10 ** 9)
+        .max(10 ** 10 - 1),
+        company_name: Joi.string(),
+        max_company_size: Joi.number(),
+        min_company_size: Joi.number(),
+        company_website: Joi.string(),
     })
     .min(1),
 };

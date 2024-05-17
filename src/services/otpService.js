@@ -15,26 +15,26 @@ function generateRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-const generateOtp = async (mobile_number, email) => {
+const generateOtp = async (/* mobile_number, */ email) => {
   try {
     const otp = generateRandomNumber(100000, 999999);
     const now = new Date();
     const otpExpirationTime = AddMinutesToDate(now, 10);
 
     let otpInfo = {};
-    if (mobile_number !== null) {
-      const oldOtp = await Otp.find({ mobile_number });
+    // if (mobile_number !== null) {
+    //   const oldOtp = await Otp.find({ mobile_number });
 
-      if (oldOtp.length > 0) {
-        await Otp.deleteMany({ mobile_number });
-      }
-      otpInfo = {
-        mobile_number,
-        otp,
-        // now,
-        expires_at: otpExpirationTime,
-      };
-    }
+    //   if (oldOtp.length > 0) {
+    //     await Otp.deleteMany({ mobile_number });
+    //   }
+    //   otpInfo = {
+    //     mobile_number,
+    //     otp,
+    //     // now,
+    //     expires_at: otpExpirationTime,
+    //   };
+    // }
     // for email
     if (email !== null) {
       const oldOtp = await Otp.find({ email });

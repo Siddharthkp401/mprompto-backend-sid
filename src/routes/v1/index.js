@@ -1,8 +1,6 @@
 import express from 'express';
 import authRoute from './auth.route.js';
 import userRoute from './user.route.js';
-import docsRoute from './docs.route.js';
-import config from '../../config/config.js';
 import fileContentRoute from './fileContent.route.js';
 import urlContentRoute from './urlContent.route.js';
 import companyContentRoute from './companyContent.route.js';
@@ -32,23 +30,9 @@ const defaultRoutes = [
   },
 ];
 
-const devRoutes = [
-  // routes available only in development mode
-  {
-    path: '/docs',
-    route: docsRoute,
-  },
-];
-
 defaultRoutes.forEach((route) => {
   router.use(route.path, route.route);
 });
 
-/* istanbul ignore next */
-if (config.env === 'development') {
-  devRoutes.forEach((route) => {
-    router.use(route.path, route.route);
-  });
-}
 
 export default router;

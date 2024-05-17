@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema(
   {
     fullname: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     email: {
@@ -26,7 +26,6 @@ const userSchema = mongoose.Schema(
       type: Number,
       // required: [true, 'Mobile number is required'],
       unique: true,
-
     },
     password: {
       type: String,
@@ -42,16 +41,16 @@ const userSchema = mongoose.Schema(
     },
     social_login_id: {
       type: String,
-      default: null
+      default: null,
     },
     login_with: {
       type: String,
       default: 'default',
-      enum: ['facebook', 'google', 'default']
+      enum: ['facebook', 'google', 'default'],
     },
     user_question_answers: {
       type: [Object],
-      default: []
+      default: [],
     },
     email_verified: {
       type: Boolean,
@@ -86,24 +85,24 @@ userSchema.plugin(paginate);
  * @returns {Promise<boolean>}
  */
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
-  const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
+  const user = await this.findOne({ email, _id: { $ne: excludeUserId }, otp_verified: true });
   return !!user;
 };
 
 userSchema.statics.isMobileNumberTaken = async function (mobile_number, excludeUserId) {
-  const user = await this.findOne({ mobile_number, _id: { $ne: excludeUserId } });
+  const user = await this.findOne({ mobile_number, _id: { $ne: excludeUserId}, otp_verified: true  });
   return !!user;
 };
 
 /**
- * Check if password matches the user's password
+ * Check if password matches the user 's password
  * @param {string} password
  * @returns {Promise<boolean>}
  */
 userSchema.methods.isPasswordMatch = async function (password) {
   const user = this;
-  let pass = bcrypt.compareSync(password, user.password);
-  return pass
+  const pass = bcrypt.compareSync(password, user.password);
+  return pass;
 };
 
 // userSchema.pre('save', async function (next) {

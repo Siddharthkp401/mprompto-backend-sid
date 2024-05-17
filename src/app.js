@@ -13,8 +13,15 @@ import authLimiter from './middlewares/rateLimiter.js';
 import routes from './routes/v1/index.js';
 import { errorConverter, errorHandler } from './middlewares/error.js';
 import ApiError from './utils/ApiError.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './swagger.json' assert {type: 'json'}
 
 const app = express();
+
+if (config.env == 'development') {
+  app.use('/v1/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  // http://localhost:3000/v1/api-doc/#/
+}
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
@@ -38,7 +45,13 @@ app.use(mongoSanitize());
 app.use(compression());
 
 // enable cors
-app.use(cors());
+const corsOpts = {
+  origin: '*',
+  methods: [
+    'GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE',
+  ],
+};
+app.use(cors(corsOpts));
 app.options('*', cors());
 
 // sotre file 

@@ -1,16 +1,19 @@
 import Joi from 'joi';
-import  {password}  from './custom.validation.js';
+import { password } from './custom.validation.js';
 
-const register = {
+const signIn = {
   body: Joi.object().keys({
-    fullname: Joi.string().required(),
+    fullname: Joi.string(),
     email: Joi.string().required().email(),
-    mobile_number: Joi.number().required().integer().min(10 ** 9).max(10 ** 10 - 1),
-    password: Joi.string().required().custom(password),
-    company_name: Joi.string().required(),
-    min_company_size: Joi.number().required(),
-    max_company_size: Joi.number().required(),
-    company_website: Joi.string().required(),
+    mobile_number: Joi.number()
+      .integer()
+      .min(10 ** 9)
+      .max(10 ** 10 - 1),
+    password: Joi.string().custom(password),
+    company_name: Joi.string(),
+    min_company_size: Joi.number(),
+    max_company_size: Joi.number(),
+    company_website: Joi.string(),
   }),
 };
 
@@ -60,22 +63,27 @@ const sendOtp = {
   // }),
 
   body: Joi.object().keys({
-    email: Joi.string().email(),
-    mobile_number: Joi.number().integer().min(10 ** 9).max(10 ** 10 - 1),
-    otp: Joi.number().required().max(6).min(6)
-  })
+    email: Joi.string().email().allow(''),
+    mobile_number: Joi.number()
+      .integer()
+      .min(10 ** 9)
+      .max(10 ** 10 - 1).allow(''),
+  }),
 };
 
 const verifyOtp = {
   body: Joi.object().keys({
-    mobile_number: Joi.number().integer().min(10 ** 9).max(10 ** 10 - 1),
-    otp: Joi.number().required().min(6)
-  })
-}
-
+    mobile_number: Joi.number()
+      .integer()
+      .min(10 ** 9)
+      .max(10 ** 10 - 1).allow('').describe('Mobile number must be of 10 digits'),
+    email: Joi.string().allow(''),
+    otp: Joi.number().required().min(6),
+  }),
+};
 
 export default {
-  register,
+  signIn,
   login,
   logout,
   refreshTokens,
@@ -83,5 +91,5 @@ export default {
   resetPassword,
   verifyEmail,
   verifyOtp,
-  sendOtp
+  sendOtp,
 };

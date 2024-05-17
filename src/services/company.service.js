@@ -13,4 +13,9 @@ const fetchUserCompany = async (userId) => {
   return Company.findOne({ user_id: userId });
 };
 
-export default { createCompany, fetchUserCompany };
+const getCompanyById = async (companyId) => {
+  return Company.findOne({ _id: companyId });
+  
+}
+
+export default { createCompany, fetchUserCompany , getCompanyById};

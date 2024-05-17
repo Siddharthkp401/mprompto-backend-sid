@@ -15,14 +15,17 @@ import tokenTypes from '../config/tokens.js';
  * @param {string} [secret]
  * @returns {string}
  */
-const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
+const generateToken = async (userId, expires, secret = config.jwt.secret) => {
   const payload = {
     sub: userId,
     iat: moment().unix(),
     exp: expires.unix(),
-    type,
   };
-  return jwt.sign(payload, secret);
+
+  let token = await jwt.sign(payload, secret)
+  await saveToken(token, userId, expires)
+  return token;
+
 };
 
 /**
@@ -34,12 +37,11 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
  * @param {boolean} [blacklisted]
  * @returns {Promise<Token>}
  */
-const saveToken = async (token, userId, expires, type, blacklisted = false) => {
+const saveToken = async (token, userId, expires, blacklisted = false) => {
   const tokenDoc = await Token.create({
     token,
-    user: userId,
+    user_id: userId,
     expires_at: expires.toDate(),
-    type,
     blacklisted,
   });
   return tokenDoc;
@@ -54,7 +56,7 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
 const verifyToken = async (token, type) => {
   const payload = jwt.verify(token, config.jwt.secret);
 
-  const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false });
+  const tokenDoc = await Token.findOne({ token, type, temp_user: payload.sub, blacklisted: false });
   if (!tokenDoc) {
     throw new Error('Token not found');
   }
@@ -108,6 +110,7 @@ const generateResetPasswordToken = async (email) => {
  * @returns {Promise<string>}
  */
 const generateVerifyEmailToken = async (user) => {
+
   const expires = moment().add(config.jwt.verifyEmailExpirationMinutes, 'minutes');
   const verifyEmailToken = generateToken(user._id, expires, tokenTypes.VERIFY_EMAIL);
   await saveToken(verifyEmailToken, user._id, expires, tokenTypes.VERIFY_EMAIL);

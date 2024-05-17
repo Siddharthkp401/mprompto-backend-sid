@@ -1,6 +1,7 @@
 import httpStatus from 'http-status';
 import { User, TempUser } from '../models/index.js';
 import ApiError from '../utils/ApiError.js';
+import companyService from './company.service.js';
 
 /**
  * Create a user in TempUser table
@@ -8,14 +9,14 @@ import ApiError from '../utils/ApiError.js';
  * @returns {Promise<User>}
  */
 const createTempUser = async (userBody) => {
-  if (await TempUser.isEmailTaken(userBody.email)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
-  }
+  // if (await TempUser.isEmailTaken(userBody.email)) {
+  //   throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  // }
 
-  if (await TempUser.isMobileNumberTaken(userBody.mobile_number)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Mobile Number already taken');
-  }
-  return TempUser.create(userBody);
+  // if (await TempUser.isMobileNumberTaken(userBody.mobile_number)) {
+  //   throw new ApiError(httpStatus.BAD_REQUEST, 'Mobile Number already taken');
+  // }
+  return await TempUser.create(userBody)
 };
 
 /**
@@ -82,6 +83,8 @@ const getUserByEmail = async (email) => {
  */
 const updateUserById = async (userId, updateBody) => {
   const user = await getUserById(userId);
+  const company = await companyService.fetchUserCompany(userId);
+
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
@@ -90,6 +93,23 @@ const updateUserById = async (userId, updateBody) => {
   }
   Object.assign(user, updateBody);
   await user.save();
+
+
+  let companyObj = {
+    company_name: updateBody.company_name ? updateBody.company_name : company.company_name,
+    min_company_size: updateBody.min_company_size ? updateBody.min_company_size : company.min_company_size,
+    max_company_size: updateBody.max_company_size ? updateBody.max_company_size : company.max_company_size,
+    company_website: updateBody.company_website ? updateBody.company_website : company.company_website,
+  }
+
+
+  // if (updateBody.company_name) {
+  Object.assign(company, companyObj);
+  await company.save();
+  // }
+
+
+
   return user;
 };
 
@@ -120,6 +140,17 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+
+/**
+ * Delete user by id
+ * @param {email} email
+ * @returns {Promise<User>}
+ */
+const deleteTempUserByEmail = async (email) => {
+  const user = await TempUser.findOneAndDelete({email:email});
+  return true;
+};
+
 export default {
   createTempUser,
   createUser,
@@ -130,4 +161,5 @@ export default {
   updateUserById,
   updateTempUserById,
   deleteUserById,
+  deleteTempUserByEmail
 };
