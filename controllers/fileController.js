@@ -1,29 +1,17 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
-const externalUrlSchema = require("../models/externalURL");
+const fileSchema = require("../models/file");
 const CompanyContentSchema = require("../models/companyContentSchema");
-const {
-  externalUrlValidationSchema,
-} = require("../validationSchemas/validationSchemas");
 
-exports.addExternalURL = async (req, res) => {
-  const { title, content_url } = req.body;
+exports.addFile = async (req, res) => {
+  const { title, filename, filepath, filesize } = req.body;
   const user = req.user;
 
   try {
-    const { error } = externalUrlValidationSchema.validate({ content_url });
-
-    if (error) {
-      return res.status(400).json({
-        status: false,
-        message: error.details[0].message,
-        data: null,
-      });
-    }
     const companyId = user.company_id;
     console.log(companyId, "companyId");
 
     const companyDb = await getCompanyDatabase(companyId);
-    const ExternalURL = companyDb.model("ExternalURL", externalUrlSchema);
+    const File = companyDb.model("File", fileSchema);
     const CompanyContent = companyDb.model(
       "CompanyContent",
       CompanyContentSchema
@@ -47,24 +35,32 @@ exports.addExternalURL = async (req, res) => {
       await companyContent.save();
     }
 
-    const newExternalURL = new ExternalURL({
+    const newFileData = {
       company_content_id: companyContent._id,
-      title: title || "",
-      content_url,
+      filename,
+      filepath,
+      filesize,
       is_deleted: false,
       created_at: new Date(),
       updated_at: new Date(),
-    });
+    };
 
-    const savedExternalURL = await newExternalURL.save();
+    if (title) {
+      newFileData.title = title;
+    } else {
+      newFileData.title = "";
+    }
+
+    const newFile = new File(newFileData);
+    const savedFile = await newFile.save();
 
     res.status(201).json({
       status: true,
-      message: "External URL added successfully",
-      data: savedExternalURL,
+      message: "File added successfully",
+      data: savedFile,
     });
   } catch (error) {
-    console.error("Error in addExternalURL:", error);
+    console.error("Error in addFile:", error);
     res.status(500).json({
       status: false,
       message: "Internal server error",

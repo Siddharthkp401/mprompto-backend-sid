@@ -1,7 +1,7 @@
 const {
   updateUserAndCreateCompanySchema,
 } = require("../validationSchemas/validationSchemas");
-const Company = require("../models/CompanySchema");
+const Company = require("../models/companySchema");
 const { createCompanyDatabase } = require("../utils/createCompanyDatabase");
 
 exports.updateUserAndCreateCompany = async (req, res) => {

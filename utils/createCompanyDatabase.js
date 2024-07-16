@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const CompanyContentSchema = require("../models/CompanyContentSchema");
-const Company = require("../models/CompanySchema");
+const CompanyContentSchema = require("../models/companyContentSchema");
+const Company = require("../models/companySchema");
 
 const createCompanyDatabase = async (companyName) => {
   try {
