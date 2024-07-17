@@ -4,6 +4,7 @@ const faqSchema = require("../models/faq");
 const fs = require("fs");
 const path = require("path");
 const xlsx = require("xlsx");
+const { singleFAQSchema } = require("../validationSchemas/validationSchemas");
 
 exports.addFAQ = async (req, res) => {
   const { title, question, answer, type } = req.body;
@@ -36,13 +37,16 @@ exports.addFAQ = async (req, res) => {
       await companyContent.save();
     }
 
-    // Handle single FAQ addition
     if (type === "single") {
-      if (!title || !question || !answer) {
+      const { error } = singleFAQSchema.validate(req.body, {
+        abortEarly: false,
+      });
+      if (error) {
         return res.status(400).json({
           status: false,
-          message: "Title, question, and answer are required for single FAQ",
-          data: null,
+          message: "Validation errors",
+          data: error.details.map((err) => err.message),
+          // data: null,
         });
       }
 

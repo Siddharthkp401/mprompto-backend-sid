@@ -18,9 +18,11 @@ const verifyOTP = async (email, otp) => {
     otp,
     expires_at: { $gt: new Date() },
   });
+
   if (!otpRecord) {
     throw new Error("Invalid OTP or OTP expired");
   }
+
   otpRecord.otp_verified = true;
   await otpRecord.save();
   return otpRecord;

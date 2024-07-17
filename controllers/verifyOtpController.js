@@ -17,6 +17,7 @@ exports.verifyOTP = async (req, res) => {
 
     const { email, otp } = value;
 
+    // Check if the user exists first
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({
@@ -27,7 +28,15 @@ exports.verifyOTP = async (req, res) => {
     }
 
     // Verify OTP
-    await verifyOTP(email, otp);
+    try {
+      await verifyOTP(email, otp);
+    } catch (otpError) {
+      return res.status(400).json({
+        status: false,
+        message: otpError.message,
+        data: null,
+      });
+    }
 
     user.email_verified = true;
     user.otp_verified = true;
@@ -57,15 +66,6 @@ exports.verifyOTP = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-
-    if (error.message === "Invalid OTP or OTP expired") {
-      return res.status(400).json({
-        status: false,
-        message: error.message,
-        data: null,
-      });
-    }
-
     res.status(500).json({
       status: false,
       message: "Internal server error",

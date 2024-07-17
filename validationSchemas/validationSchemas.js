@@ -61,9 +61,26 @@ const externalUrlValidationSchema = Joi.object({
   }),
 });
 
+const singleFAQSchema = Joi.object({
+  title: Joi.string().optional(),
+  type: Joi.string().required().messages({
+    "string.empty": "Type is required",
+    "any.required": "Type is required",
+  }),
+  question: Joi.string().required().messages({
+    "string.empty": "Question is required",
+    "any.required": "Question is required",
+  }),
+  answer: Joi.string().required().messages({
+    "string.empty": "Answer is required",
+    "any.required": "Answer is required",
+  }),
+});
+
 module.exports = {
   registerUserSchema,
   verifyOTPSchema,
   updateUserAndCreateCompanySchema,
   externalUrlValidationSchema,
+  singleFAQSchema,
 };
