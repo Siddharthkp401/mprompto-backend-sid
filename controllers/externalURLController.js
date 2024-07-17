@@ -3,7 +3,9 @@ const externalUrlSchema = require("../models/externalURL");
 const CompanyContentSchema = require("../models/companyContentSchema");
 const XLSX = require("xlsx");
 const path = require("path");
-const fs = require("fs");
+const {
+  externalUrlValidationSchema,
+} = require("../validationSchemas/validationSchemas");
 
 exports.addExternalURL = async (req, res) => {
   const { title, content_url, type } = req.body;
@@ -47,6 +49,18 @@ exports.addExternalURL = async (req, res) => {
     }
 
     if (type === "single") {
+      const { error } = externalUrlValidationSchema.validate({
+        title,
+        content_url,
+      });
+      if (error) {
+        return res.status(400).json({
+          status: false,
+          message: error.details[0].message,
+          data: null,
+        });
+      }
+
       const newExternalURL = new ExternalURL({
         company_content_id: companyContent._id,
         title: title || "",
@@ -74,8 +88,7 @@ exports.addExternalURL = async (req, res) => {
         });
       }
 
-      const filePath = path.join(__dirname, "../uploads", req.file.filename);
-
+      const filePath = path.join(__dirname, "../uploads", req.file.filename); // eslint-disable-line no-undef
       const workbook = XLSX.readFile(filePath);
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const urls = XLSX.utils
@@ -101,7 +114,8 @@ exports.addExternalURL = async (req, res) => {
         const savedExternalURL = await newExternalURL.save();
         savedUrls.push(savedExternalURL);
       }
-      // Delete the uploaded Excel file after processing
+
+      // Optionally delete the uploaded Excel file after processing
       // fs.unlinkSync(filePath);
 
       return res.status(201).json({

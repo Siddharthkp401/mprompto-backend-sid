@@ -54,6 +54,7 @@ const updateUserAndCreateCompanySchema = Joi.object({
 });
 
 const externalUrlValidationSchema = Joi.object({
+  title: Joi.string().optional(),
   content_url: Joi.string().uri().required().messages({
     "string.empty": "Content URL is required",
     "any.required": "Content URL is required",

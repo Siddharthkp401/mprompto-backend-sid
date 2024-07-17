@@ -79,7 +79,7 @@ exports.addFAQ = async (req, res) => {
         });
       }
 
-      const filePath = path.join(__dirname, "../uploads", req.file.filename);
+      const filePath = path.join(__dirname, "../uploads", req.file.filename); // eslint-disable-line no-undef
       const workbook = xlsx.readFile(filePath);
       const sheetName = workbook.SheetNames[0];
       const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], {
