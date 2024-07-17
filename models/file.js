@@ -11,6 +11,7 @@ const fileSchema = new Schema({
   filename: { type: String, required: true },
   filepath: { type: String, required: true },
   filesize: { type: String, required: true },
+  pdf_url: { type: String, default: "", required: false },
   is_deleted: { type: Boolean, default: false },
   deleted_at: { type: Date, default: null },
   created_at: { type: Date, default: Date.now },

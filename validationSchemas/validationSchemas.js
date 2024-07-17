@@ -78,10 +78,16 @@ const singleFAQSchema = Joi.object({
   }),
 });
 
+const fileUploadSchema = Joi.object({
+  title: Joi.string().allow("").optional(),
+  pdfUrl: Joi.string().uri().optional(),
+});
+
 module.exports = {
   registerUserSchema,
   verifyOTPSchema,
   updateUserAndCreateCompanySchema,
   externalUrlValidationSchema,
   singleFAQSchema,
+  fileUploadSchema,
 };

@@ -3,8 +3,10 @@ const fileSchema = require("../models/file");
 const CompanyContentSchema = require("../models/companyContentSchema");
 
 exports.addFile = async (req, res) => {
-  const { title, filename, filepath, filesize } = req.body;
+  const { title, pdf_url } = req.body;
   const user = req.user;
+
+  const { filename, path: filepath, size: filesize } = req.file;
 
   try {
     const companyId = user.company_id;
@@ -40,16 +42,13 @@ exports.addFile = async (req, res) => {
       filename,
       filepath,
       filesize,
+      pdf_url,
       is_deleted: false,
       created_at: new Date(),
       updated_at: new Date(),
     };
 
-    if (title) {
-      newFileData.title = title;
-    } else {
-      newFileData.title = "";
-    }
+    newFileData.title = title || "";
 
     const newFile = new File(newFileData);
     const savedFile = await newFile.save();

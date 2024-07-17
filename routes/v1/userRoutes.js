@@ -27,7 +27,8 @@ router.post(
   upload.single("file"),
   addExternalURL
 );
-router.post("/add-file", authenticateToken, addFile);
+router.post("/add-file", authenticateToken,upload.single("file"),
+addFile);
 router.post("/add-faq", authenticateToken, upload.single("file"), addFAQ);
 
 module.exports = router;
