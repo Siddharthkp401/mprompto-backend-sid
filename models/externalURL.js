@@ -7,7 +7,7 @@ const externalUrlSchema = new Schema({
     ref: "CompanyContent",
     required: true,
   },
-  title: { type: String, required: true, default: "" },
+  title: { type: String, required: false, default: "" },
   content_url: { type: String, required: true },
   is_deleted: { type: Boolean, default: false },
   deleted_at: { type: Date, default: null },

@@ -21,7 +21,12 @@ router.put(
   userController.updateUserAndCreateCompany
 );
 
-router.post("/add-external-url", authenticateToken, addExternalURL);
+router.post(
+  "/add-external-url",
+  authenticateToken,
+  upload.single("file"),
+  addExternalURL
+);
 router.post("/add-file", authenticateToken, addFile);
 router.post("/add-faq", authenticateToken, upload.single("file"), addFAQ);
 

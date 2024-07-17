@@ -1,24 +1,23 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
 const externalUrlSchema = require("../models/externalURL");
 const CompanyContentSchema = require("../models/companyContentSchema");
-const {
-  externalUrlValidationSchema,
-} = require("../validationSchemas/validationSchemas");
+const XLSX = require("xlsx");
+const path = require("path");
+const fs = require("fs");
 
 exports.addExternalURL = async (req, res) => {
-  const { title, content_url } = req.body;
+  const { title, content_url, type } = req.body;
   const user = req.user;
 
-  try {
-    const { error } = externalUrlValidationSchema.validate({ content_url });
+  if (!type || !["single", "multi"].includes(type)) {
+    return res.status(400).json({
+      status: false,
+      message: "Invalid type specified",
+      data: null,
+    });
+  }
 
-    if (error) {
-      return res.status(400).json({
-        status: false,
-        message: error.details[0].message,
-        data: null,
-      });
-    }
+  try {
     const companyId = user.company_id;
     console.log(companyId, "companyId");
 
@@ -47,22 +46,76 @@ exports.addExternalURL = async (req, res) => {
       await companyContent.save();
     }
 
-    const newExternalURL = new ExternalURL({
-      company_content_id: companyContent._id,
-      title: title || "",
-      content_url,
-      is_deleted: false,
-      created_at: new Date(),
-      updated_at: new Date(),
-    });
+    if (type === "single") {
+      const newExternalURL = new ExternalURL({
+        company_content_id: companyContent._id,
+        title: title || "",
+        content_url,
+        is_deleted: false,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
 
-    const savedExternalURL = await newExternalURL.save();
+      const savedExternalURL = await newExternalURL.save();
 
-    res.status(201).json({
-      status: true,
-      message: "External URL added successfully",
-      data: savedExternalURL,
-    });
+      return res.status(201).json({
+        status: true,
+        message: "External URL added successfully",
+        data: savedExternalURL,
+      });
+    } else if (type === "multi") {
+      const { file } = req;
+
+      if (!file) {
+        return res.status(400).json({
+          status: false,
+          message: "Excel file is required",
+          data: null,
+        });
+      }
+
+      const filePath = path.join(__dirname, "../uploads", req.file.filename);
+
+      const workbook = XLSX.readFile(filePath);
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const urls = XLSX.utils
+        .sheet_to_json(worksheet, { header: 1 })
+        .flat()
+        .filter((url) => {
+          const urlRegex = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i;
+          return urlRegex.test(url);
+        });
+
+      const savedUrls = [];
+
+      for (const url of urls) {
+        const newExternalURL = new ExternalURL({
+          company_content_id: companyContent._id,
+          title: title || "",
+          content_url: url,
+          is_deleted: false,
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
+
+        const savedExternalURL = await newExternalURL.save();
+        savedUrls.push(savedExternalURL);
+      }
+      // Delete the uploaded Excel file after processing
+      // fs.unlinkSync(filePath);
+
+      return res.status(201).json({
+        status: true,
+        message: "External URLs added successfully",
+        data: savedUrls,
+      });
+    } else {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid type specified",
+        data: null,
+      });
+    }
   } catch (error) {
     console.error("Error in addExternalURL:", error);
     res.status(500).json({
