@@ -10,10 +10,8 @@ exports.addFAQ = async (req, res) => {
   const user = req.user;
 
   try {
-    // Retrieve companyId from authenticated user
     const companyId = user.company_id;
 
-    // Get company database based on companyId
     const companyDb = await getCompanyDatabase(companyId);
     const FAQ = companyDb.model("FAQ", faqSchema);
     const CompanyContent = companyDb.model(
@@ -21,7 +19,6 @@ exports.addFAQ = async (req, res) => {
       CompanyContentSchema
     );
 
-    // Check if there is existing company content record, create if not
     let companyContent = await CompanyContent.findOne({
       company_id: companyId,
     });
@@ -41,6 +38,14 @@ exports.addFAQ = async (req, res) => {
 
     // Handle single FAQ addition
     if (type === "single") {
+      if (!title || !question || !answer) {
+        return res.status(400).json({
+          status: false,
+          message: "Title, question, and answer are required for single FAQ",
+          data: null,
+        });
+      }
+
       const newFAQ = new FAQ({
         company_content_id: companyContent._id,
         title,
@@ -53,8 +58,6 @@ exports.addFAQ = async (req, res) => {
 
       const savedFAQ = await newFAQ.save();
 
-      console.log(savedFAQ, "56");
-
       return res.status(201).json({
         status: true,
         message: "FAQ added successfully",
@@ -63,24 +66,40 @@ exports.addFAQ = async (req, res) => {
     }
 
     // Handle multiple FAQs from Excel file upload
-    if (type === "multi" && req.file) {
-      console.log(req.file, "file");
+    if (type === "multi") {
+      if (!req.file) {
+        return res.status(400).json({
+          status: false,
+          message: "File is required for multiple FAQs",
+          data: null,
+        });
+      }
+
       const filePath = path.join(__dirname, "../uploads", req.file.filename);
       const workbook = xlsx.readFile(filePath);
       const sheetName = workbook.SheetNames[0];
-      const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], {
+        header: 1,
+      });
 
-      console.log(data, "data");
+      const headers = data[0];
+      const rows = data.slice(1);
 
-      const faqs = data.map((row) => ({
-        company_content_id: companyContent._id,
-        title: row.title,
-        question: row.question,
-        answer: row.answer,
-        is_deleted: false,
-        created_at: new Date(),
-        updated_at: new Date(),
-      }));
+      const faqs = rows.map((row) => {
+        const faqObject = {};
+        headers.forEach((header, index) => {
+          faqObject[header.toLowerCase()] = row[index];
+        });
+        return {
+          company_content_id: companyContent._id,
+          title: faqObject["title"],
+          question: faqObject["questions"],
+          answer: faqObject["answer"],
+          is_deleted: false,
+          created_at: new Date(),
+          updated_at: new Date(),
+        };
+      });
 
       const savedFAQs = await FAQ.insertMany(faqs);
 
@@ -94,10 +113,9 @@ exports.addFAQ = async (req, res) => {
       });
     }
 
-    // Invalid request type or missing file in case of multi
     return res.status(400).json({
       status: false,
-      message: "Invalid type or missing file",
+      message: "Invalid type",
       data: null,
     });
   } catch (error) {
