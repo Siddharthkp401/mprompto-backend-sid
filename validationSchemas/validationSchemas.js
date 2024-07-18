@@ -79,8 +79,16 @@ const singleFAQSchema = Joi.object({
 });
 
 const fileUploadSchema = Joi.object({
-  title: Joi.string().allow("").optional(),
-  pdfUrl: Joi.string().uri().optional(),
+  title: Joi.string().optional(),
+  file: Joi.any().optional().messages({
+    "any.required": "File is required",
+    "string.empty": "File cannot be empty",
+    "binary.base64": "File must be a base64 string",
+  }),
+  pdf_url: Joi.string().uri().optional().messages({
+    "string.empty": "Pdf url is required",
+    "string.uri": "The PDF URL must be a valid URI.",
+  }),
 });
 
 module.exports = {

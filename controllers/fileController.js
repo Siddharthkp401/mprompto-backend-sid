@@ -1,6 +1,7 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
 const fileSchema = require("../models/file");
 const CompanyContentSchema = require("../models/companyContentSchema");
+const { fileUploadSchema } = require("../validationSchemas/validationSchemas");
 
 exports.addFile = async (req, res) => {
   const { title, pdf_url } = req.body;
@@ -8,9 +9,17 @@ exports.addFile = async (req, res) => {
 
   const { filename, path: filepath, size: filesize } = req.file;
 
+  const { error } = fileUploadSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({
+      status: false,
+      message: error.details[0].message,
+      data: null,
+    });
+  }
+
   try {
     const companyId = user.company_id;
-    console.log(companyId, "companyId");
 
     const companyDb = await getCompanyDatabase(companyId);
     const File = companyDb.model("File", fileSchema);
@@ -18,6 +27,19 @@ exports.addFile = async (req, res) => {
       "CompanyContent",
       CompanyContentSchema
     );
+
+    const newCompanyContent = new CompanyContent({
+      company_id: companyId,
+      content_type: 3,
+      language: "English",
+      content_state: 1,
+      content_audience: 0,
+      is_deleted: false,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+
+    const savedCompanyContent = await newCompanyContent.save();
 
     let companyContent = await CompanyContent.findOne({
       company_id: companyId,
@@ -34,11 +56,13 @@ exports.addFile = async (req, res) => {
         created_at: new Date(),
         updated_at: new Date(),
       });
-      await companyContent.save();
     }
 
+
+    await companyContent.save();
+
     const newFileData = {
-      company_content_id: companyContent._id,
+      company_content_id: savedCompanyContent._id,
       filename,
       filepath,
       filesize,

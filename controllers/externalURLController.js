@@ -1,6 +1,7 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
 const externalUrlSchema = require("../models/externalURL");
 const CompanyContentSchema = require("../models/companyContentSchema");
+const fs = require("fs");
 const XLSX = require("xlsx");
 const path = require("path");
 const {
@@ -30,23 +31,17 @@ exports.addExternalURL = async (req, res) => {
       CompanyContentSchema
     );
 
-    let companyContent = await CompanyContent.findOne({
+    const newCompanyContent = new CompanyContent({
       company_id: companyId,
+      content_type: 0,
+      language: "English",
+      content_state: 1,
+      content_audience: 0,
+      is_deleted: false,
+      created_at: new Date(),
+      updated_at: new Date(),
     });
-
-    if (!companyContent) {
-      companyContent = new CompanyContent({
-        company_id: companyId,
-        content_type: 0,
-        language: "English",
-        content_state: 1,
-        content_audience: 0,
-        is_deleted: false,
-        created_at: new Date(),
-        updated_at: new Date(),
-      });
-      await companyContent.save();
-    }
+    const savedCompanyContent = await newCompanyContent.save();
 
     if (type === "single") {
       const { error } = externalUrlValidationSchema.validate({
@@ -62,7 +57,7 @@ exports.addExternalURL = async (req, res) => {
       }
 
       const newExternalURL = new ExternalURL({
-        company_content_id: companyContent._id,
+        company_content_id: savedCompanyContent._id,
         title: title || "",
         content_url,
         is_deleted: false,
@@ -72,10 +67,16 @@ exports.addExternalURL = async (req, res) => {
 
       const savedExternalURL = await newExternalURL.save();
 
+      savedCompanyContent.content_type = 1;
+      await savedCompanyContent.save();
+
       return res.status(201).json({
         status: true,
         message: "External URL added successfully",
-        data: savedExternalURL,
+        data: {
+          externalURL: savedExternalURL,
+          companyContent: savedCompanyContent,
+        },
       });
     } else if (type === "multi") {
       const { file } = req;
@@ -103,7 +104,7 @@ exports.addExternalURL = async (req, res) => {
 
       for (const url of urls) {
         const newExternalURL = new ExternalURL({
-          company_content_id: companyContent._id,
+          company_content_id: savedCompanyContent._id,
           title: title || "",
           content_url: url,
           is_deleted: false,
@@ -115,13 +116,20 @@ exports.addExternalURL = async (req, res) => {
         savedUrls.push(savedExternalURL);
       }
 
+      // Update company content type
+      savedCompanyContent.content_type = 1;
+      await savedCompanyContent.save();
+
       // Optionally delete the uploaded Excel file after processing
-      // fs.unlinkSync(filePath);
+      fs.unlinkSync(filePath);
 
       return res.status(201).json({
         status: true,
         message: "External URLs added successfully",
-        data: savedUrls,
+        data: {
+          externalURLs: savedUrls,
+          companyContent: savedCompanyContent,
+        },
       });
     } else {
       return res.status(400).json({

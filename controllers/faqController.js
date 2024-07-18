@@ -20,22 +20,18 @@ exports.addFAQ = async (req, res) => {
       CompanyContentSchema
     );
 
-    let companyContent = await CompanyContent.findOne({
+    // Always create a new CompanyContent record
+    const newCompanyContent = new CompanyContent({
       company_id: companyId,
+      content_type: 2, // Content type for FAQ
+      language: "English",
+      content_state: 1,
+      content_audience: 0,
+      is_deleted: false,
+      created_at: new Date(),
+      updated_at: new Date(),
     });
-    if (!companyContent) {
-      companyContent = new CompanyContent({
-        company_id: companyId,
-        content_type: 0,
-        language: "English",
-        content_state: 1,
-        content_audience: 0,
-        is_deleted: false,
-        created_at: new Date(),
-        updated_at: new Date(),
-      });
-      await companyContent.save();
-    }
+    const savedCompanyContent = await newCompanyContent.save();
 
     if (type === "single") {
       const { error } = singleFAQSchema.validate(req.body, {
@@ -46,12 +42,11 @@ exports.addFAQ = async (req, res) => {
           status: false,
           message: "Validation errors",
           data: error.details.map((err) => err.message),
-          // data: null,
         });
       }
 
       const newFAQ = new FAQ({
-        company_content_id: companyContent._id,
+        company_content_id: savedCompanyContent._id,
         title,
         question,
         answer,
@@ -65,7 +60,10 @@ exports.addFAQ = async (req, res) => {
       return res.status(201).json({
         status: true,
         message: "FAQ added successfully",
-        data: savedFAQ,
+        data: {
+          faq: savedFAQ,
+          companyContent: savedCompanyContent,
+        },
       });
     }
 
@@ -95,7 +93,7 @@ exports.addFAQ = async (req, res) => {
           faqObject[header.toLowerCase()] = row[index];
         });
         return {
-          company_content_id: companyContent._id,
+          company_content_id: savedCompanyContent._id,
           title: faqObject["title"],
           question: faqObject["questions"],
           answer: faqObject["answer"],
@@ -108,12 +106,15 @@ exports.addFAQ = async (req, res) => {
       const savedFAQs = await FAQ.insertMany(faqs);
 
       // Clean up: Delete the uploaded file after processing
-      fs.unlinkSync(filePath);
+      // fs.unlinkSync(filePath);
 
       return res.status(201).json({
         status: true,
         message: "FAQs added successfully",
-        data: savedFAQs,
+        data: {
+          faqs: savedFAQs,
+          companyContent: savedCompanyContent,
+        },
       });
     }
 
