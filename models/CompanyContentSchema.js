@@ -8,7 +8,8 @@ const CompanyContentSchema = new Schema({
     required: true,
   },
   content_type: {
-    type: Number,
+    type: String,
+    enum: ["URLs", "Documents", "Files", "FAQs"],
     required: true,
   },
   language: {
@@ -16,9 +17,11 @@ const CompanyContentSchema = new Schema({
     default: "English",
   },
   content_state: {
-    type: Number,
-    required: true,
+    type: String,
+    enum: ["included", "excluded", "sandbox"],
+    default: "included",
   },
+
   content_audience: {
     type: Number,
     required: true,

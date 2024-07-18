@@ -53,17 +53,7 @@ exports.updateUserAndCreateCompany = async (req, res) => {
     });
     const savedCompany = await newCompany.save();
 
-    // const companyContent = new CompanyContent({
-    //   company_id: savedCompany._id,
-    //   content_type: 0,
-    //   language: "English",
-    //   content_state: 1,
-    //   content_audience: 0,
-    //   is_deleted: false,
-    //   created_at: new Date(),
-    //   updated_at: new Date(),
-    // });
-    // await companyContent.save();
+   
 
     user.company_id = savedCompany._id;
     await user.save();

@@ -30,9 +30,8 @@ exports.addFile = async (req, res) => {
 
     const newCompanyContent = new CompanyContent({
       company_id: companyId,
-      content_type: 3,
+      content_type: 'Files',
       language: "English",
-      content_state: 1,
       content_audience: 0,
       is_deleted: false,
       created_at: new Date(),
@@ -48,9 +47,7 @@ exports.addFile = async (req, res) => {
     if (!companyContent) {
       companyContent = new CompanyContent({
         company_id: companyId,
-        content_type: 0,
         language: "English",
-        content_state: 1,
         content_audience: 0,
         is_deleted: false,
         created_at: new Date(),

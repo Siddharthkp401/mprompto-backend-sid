@@ -23,9 +23,8 @@ exports.addFAQ = async (req, res) => {
     // Always create a new CompanyContent record
     const newCompanyContent = new CompanyContent({
       company_id: companyId,
-      content_type: 2, // Content type for FAQ
+      content_type: "FAQs",
       language: "English",
-      content_state: 1,
       content_audience: 0,
       is_deleted: false,
       created_at: new Date(),
