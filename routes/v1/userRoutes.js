@@ -8,6 +8,9 @@ const { addExternalURL } = require("../../controllers/externalURLController");
 const { addFile } = require("../../controllers/fileController");
 const { addFAQ } = require("../../controllers/faqController");
 const { listCompanyContent } = require("../../controllers/contentController");
+const {
+  addCustomizationData,
+} = require("../../controllers/customizationController");
 
 const upload = require("../../utils/multerConfig");
 
@@ -33,4 +36,10 @@ router.post("/add-faq", authenticateToken, upload.single("file"), addFAQ);
 
 router.get("/content-listing", authenticateToken, listCompanyContent);
 
+router.post(
+  "/customize-data-add",
+  authenticateToken,
+  upload.single("logo"), 
+  addCustomizationData
+);
 module.exports = router;

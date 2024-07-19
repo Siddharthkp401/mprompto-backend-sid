@@ -49,7 +49,9 @@ exports.listCompanyContent = async (req, res) => {
     if (search) {
       console.log(search, "seach");
       companyContentQuery.title = { $regex: search, $options: "i" };
-      console.log(companyContentQuery.title, "title");
+      console.log(companyContentQuery, "52");
+
+      console.log(companyContentQuery.title, "54");
     }
 
     const skip = (page - 1) * limit;
