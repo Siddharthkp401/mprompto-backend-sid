@@ -9,7 +9,7 @@ exports.listCompanyContent = async (req, res) => {
   const user = req.user;
   const companyId = user.company_id;
 
-  const { filters } = req.body;
+  const { filters, page = 1, limit = 10, search } = req.body;
 
   try {
     const companyDb = await getCompanyDatabase(companyId);
@@ -27,11 +27,12 @@ exports.listCompanyContent = async (req, res) => {
       is_deleted: false,
     };
 
+    // Apply filters
     if (filters && filters.content_state) {
       if (filters.content_state === "included") {
         companyContentQuery.content_state = { $in: ["included"] };
       } else if (filters.content_state === "excluded") {
-        companyContentQuery.content_state = { $nin: ["excluded"] };
+        companyContentQuery.content_state = { $nin: ["included", "sandbox"] };
       } else if (filters.content_state === "sandbox") {
         companyContentQuery.content_state = "sandbox";
       }
@@ -42,11 +43,21 @@ exports.listCompanyContent = async (req, res) => {
     }
 
     if (filters && filters.content_type) {
-        const contentTypes = filters.content_type.split(",").map(type => type.trim());
-          companyContentQuery.content_type = { $in: contentTypes };
-      }
+      companyContentQuery.content_type = filters.content_type;
+    }
 
-    const companyContents = await CompanyContent.find(companyContentQuery);
+    if (search) {
+      console.log(search, "seach");
+      companyContentQuery.title = { $regex: search, $options: "i" };
+      console.log(companyContentQuery.title, "title");
+    }
+
+    const skip = (page - 1) * limit;
+
+    const companyContents = await CompanyContent.find(companyContentQuery)
+      .skip(skip)
+      .limit(limit);
+
     const faqs = await FAQ.find({ is_deleted: false });
     const externalUrls = await ExternalURL.find({ is_deleted: false });
     const files = await File.find({ is_deleted: false });
@@ -69,11 +80,22 @@ exports.listCompanyContent = async (req, res) => {
       //   ),
     }));
 
+    const totalFAQs = await FAQ.countDocuments({ is_deleted: false });
+    const totalExternalUrls = await ExternalURL.countDocuments({
+      is_deleted: false,
+    });
+    const totalFiles = await File.countDocuments({ is_deleted: false });
+
+    const combinedTotalCount = totalFAQs + totalExternalUrls + totalFiles;
+
     if (contentList.length === 0) {
       return res.status(404).json({
         status: true,
         message: "No company content found",
         data: [],
+        totalCounts: {
+          combinedTotal: combinedTotalCount,
+        },
       });
     }
 
@@ -81,6 +103,14 @@ exports.listCompanyContent = async (req, res) => {
       status: true,
       message: "Company content retrieved successfully",
       data: contentList,
+      pagination: {
+        total: contentList.length,
+        page,
+        limit,
+      },
+      totalCounts: {
+        combinedTotal: combinedTotalCount,
+      },
     });
   } catch (error) {
     console.error("Error in listCompanyContent:", error);
