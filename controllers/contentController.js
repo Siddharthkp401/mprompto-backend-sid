@@ -74,9 +74,15 @@ exports.listCompanyContent = async (req, res) => {
 
     const companyContentIds = new Set();
 
-    faqs.forEach((faq) => companyContentIds.add(faq.company_content_id.toString()));
-    externalUrls.forEach((url) => companyContentIds.add(url.company_content_id.toString()));
-    files.forEach((file) => companyContentIds.add(file.company_content_id.toString()));
+    faqs.forEach((faq) =>
+      companyContentIds.add(faq.company_content_id.toString())
+    );
+    externalUrls.forEach((url) =>
+      companyContentIds.add(url.company_content_id.toString())
+    );
+    files.forEach((file) =>
+      companyContentIds.add(file.company_content_id.toString())
+    );
 
     if (companyContentIds.size > 0) {
       companyContentQuery._id = { $in: Array.from(companyContentIds) };
