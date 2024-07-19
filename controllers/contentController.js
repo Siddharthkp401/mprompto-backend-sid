@@ -46,12 +46,40 @@ exports.listCompanyContent = async (req, res) => {
       companyContentQuery.content_type = filters.content_type;
     }
 
-    if (search) {
-      console.log(search, "seach");
-      companyContentQuery.title = { $regex: search, $options: "i" };
-      console.log(companyContentQuery, "52");
+    let faqQuery = {};
+    let externalUrlQuery = {};
+    let fileQuery = {};
 
-      console.log(companyContentQuery.title, "54");
+    if (search) {
+      const regexSearch = { $regex: search, $options: "i" };
+      faqQuery.title = regexSearch;
+      externalUrlQuery.title = regexSearch;
+      fileQuery.title = regexSearch;
+    }
+
+    const faqs = await FAQ.find({
+      ...faqQuery,
+      is_deleted: false,
+    });
+
+    const externalUrls = await ExternalURL.find({
+      ...externalUrlQuery,
+      is_deleted: false,
+    });
+
+    const files = await File.find({
+      ...fileQuery,
+      is_deleted: false,
+    });
+
+    const companyContentIds = new Set();
+
+    faqs.forEach((faq) => companyContentIds.add(faq.company_content_id.toString()));
+    externalUrls.forEach((url) => companyContentIds.add(url.company_content_id.toString()));
+    files.forEach((file) => companyContentIds.add(file.company_content_id.toString()));
+
+    if (companyContentIds.size > 0) {
+      companyContentQuery._id = { $in: Array.from(companyContentIds) };
     }
 
     const skip = (page - 1) * limit;
@@ -59,11 +87,6 @@ exports.listCompanyContent = async (req, res) => {
     const companyContents = await CompanyContent.find(companyContentQuery)
       .skip(skip)
       .limit(limit);
-
-    const faqs = await FAQ.find({ is_deleted: false });
-    const externalUrls = await ExternalURL.find({ is_deleted: false });
-    const files = await File.find({ is_deleted: false });
-    // const reviewRatings = await ReviewRating.find({ is_deleted: false });
 
     const contentList = companyContents.map((content) => ({
       ...content.toObject(),
@@ -76,10 +99,10 @@ exports.listCompanyContent = async (req, res) => {
       files: files.filter(
         (file) => file.company_content_id.toString() === content._id.toString()
       ),
-      //   reviewRatings: reviewRatings.filter(
-      //     (review) =>
-      //       review.company_content_id.toString() === content._id.toString()
-      //   ),
+      // reviewRatings: reviewRatings.filter(
+      //   (review) =>
+      //     review.company_content_id.toString() === content._id.toString()
+      // ),
     }));
 
     const totalFAQs = await FAQ.countDocuments({ is_deleted: false });
