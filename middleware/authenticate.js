@@ -20,7 +20,7 @@ const authenticateToken = (req, res, next) => {
 
   jwt.verify(token, JWT_SECRET, async (err, decoded) => {
     if (err) {
-      console.error("Error verifying token:", err); 
+      console.error("Error verifying token:", err);
       return res.status(403).json({
         status: false,
         message: "Invalid token",
