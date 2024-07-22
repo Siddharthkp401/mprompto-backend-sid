@@ -7,7 +7,7 @@ const { createCompanyDatabase } = require("../utils/createCompanyDatabase");
 exports.updateUserAndCreateCompany = async (req, res) => {
   console.log(req.user, "user from token");
   const {
-    fullname,
+    name,
     country_code,
     mobile_number,
     company_name,
@@ -32,7 +32,7 @@ exports.updateUserAndCreateCompany = async (req, res) => {
       });
     }
 
-    user.fullname = fullname;
+    user.name = name;
     user.country_code = country_code;
     user.mobile_number = mobile_number;
     await user.save();

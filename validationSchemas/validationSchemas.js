@@ -28,7 +28,7 @@ const verifyOTPSchema = Joi.object({
 });
 
 const updateUserAndCreateCompanySchema = Joi.object({
-  fullname: Joi.string().max(50).required().messages({
+  name: Joi.string().max(50).required().messages({
     "string.base": `"must be a string`,
     "string.empty": `is required`,
     "string.max": `fullname length must be less than or equal to {#limit} characters long`,
