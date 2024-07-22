@@ -1,12 +1,12 @@
 const OTP = require("../models/otp");
 
 const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return Math.floor(1000 + Math.random() * 9000).toString();
 };
 
 const saveOTP = async (email, mobile_number, user_id) => {
   const otp = generateOTP();
-  const expires_at = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
+  const expires_at = new Date(Date.now() + 10 * 60 * 1000); 
   const newOTP = new OTP({ user_id, email, otp, expires_at });
   await newOTP.save();
   return otp;

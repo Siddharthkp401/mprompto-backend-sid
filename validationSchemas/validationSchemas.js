@@ -24,7 +24,7 @@ const verifyOTPSchema = Joi.object({
       "string.email": "Email must be a valid format",
       "any.required": "Email is required",
     }),
-  otp: Joi.string().length(6).required(),
+  otp: Joi.string().length(4).required(),
 });
 
 const updateUserAndCreateCompanySchema = Joi.object({

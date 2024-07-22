@@ -39,11 +39,10 @@ exports.registerUser = async (req, res) => {
 
     // Generate OTP and send via email
     const otp = await saveOTP(email, mobile_number, user._id);
-    await sendMail(
-      email,
-      "OTP for Registration",
-      `Your OTP for registration is: ${otp}`
-    );
+    // await sendMail(
+    await (email,
+    "OTP for Registration",
+    `Your OTP for registration is: ${otp}`);
 
     res.status(200).json({
       status: true,
