@@ -18,8 +18,8 @@ const CompanyContentSchema = new Schema({
   },
   content_state: {
     type: String,
-    enum: ["included", "excluded", "sandbox"],
-    default: "included",
+    enum: ["Included", "Excluded", "Sandbox"],
+    default: "Included",
   },
 
   content_audience: {
