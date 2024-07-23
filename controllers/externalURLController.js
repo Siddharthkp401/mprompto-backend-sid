@@ -48,7 +48,7 @@ exports.addExternalURL = async (req, res) => {
         content_url,
       });
       if (error) {
-        return res.status(400).json({
+        return res.status(200).json({
           status: false,
           message: error.details[0].message,
           data: null,
@@ -71,7 +71,7 @@ exports.addExternalURL = async (req, res) => {
 
       return res.status(201).json({
         status: true,
-        message: "External URL added successfully",
+        message: "Single External URL added successfully",
         data: {
           externalURL: savedExternalURL,
           companyContent: savedCompanyContent,
@@ -124,7 +124,7 @@ exports.addExternalURL = async (req, res) => {
 
       return res.status(201).json({
         status: true,
-        message: "External URLs added successfully",
+        message: "Multi External URLs added successfully",
         data: {
           externalURLs: savedUrls,
           companyContent: savedCompanyContent,
