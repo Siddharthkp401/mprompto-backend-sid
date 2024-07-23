@@ -24,7 +24,7 @@ exports.updateUserAndCreateCompany = async (req, res) => {
       abortEarly: false,
     });
     if (error) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
         message: "Validation error",
         errors: error.details.map((detail) => detail.message),
@@ -52,8 +52,6 @@ exports.updateUserAndCreateCompany = async (req, res) => {
       updated_at: new Date(),
     });
     const savedCompany = await newCompany.save();
-
-   
 
     user.company_id = savedCompany._id;
     await user.save();

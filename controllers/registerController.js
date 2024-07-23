@@ -21,7 +21,7 @@ exports.registerUser = async (req, res) => {
     // Check if user with the same email already exists
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
         message: "User already exists",
         data: null,
@@ -46,7 +46,7 @@ exports.registerUser = async (req, res) => {
 
     res.status(200).json({
       status: true,
-      message: "User registered successfully",
+      message: "Otp sent successfully",
       data: null,
     });
   } catch (error) {

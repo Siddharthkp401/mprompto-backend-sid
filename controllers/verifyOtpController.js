@@ -31,7 +31,7 @@ exports.verifyOTP = async (req, res) => {
     try {
       await verifyOTP(email, otp);
     } catch (otpError) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
         message: otpError.message,
         data: null,
