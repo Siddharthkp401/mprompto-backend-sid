@@ -6,7 +6,7 @@ const fileSchema = require("../models/file");
 // const reviewRatingSchema = require("../models/reviewRating");
 
 exports.listCompanyContent = async (req, res) => {
-  console.log(req.query, "body");
+  // console.log(req.query, "body");
   const user = req.user;
   const companyId = user.company_id;
 
@@ -29,15 +29,8 @@ exports.listCompanyContent = async (req, res) => {
       is_deleted: false,
     };
 
-    // Apply filters
     if (filters && filters.content_state) {
-      if (filters.content_state === "included") {
-        companyContentQuery.content_state = { $in: ["included"] };
-      } else if (filters.content_state === "excluded") {
-        companyContentQuery.content_state = { $nin: ["included", "sandbox"] };
-      } else if (filters.content_state === "sandbox") {
-        companyContentQuery.content_state = "sandbox";
-      }
+      companyContentQuery.content_state = filters.content_state;
     }
 
     if (filters && filters.language) {
@@ -146,7 +139,7 @@ exports.listCompanyContent = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error in listCompanyContent:", error);
+    // console.error("Error in listCompanyContent:", error);
     return res.status(500).json({
       status: false,
       message: "Internal server error",
