@@ -69,7 +69,7 @@ exports.addFAQ = async (req, res) => {
     // Handle multiple FAQs from Excel file upload
     if (type === "multi") {
       if (!req.file) {
-        return res.status(400).json({
+        return res.status(200).json({
           status: false,
           message: "File is required for multiple FAQs",
           data: null,

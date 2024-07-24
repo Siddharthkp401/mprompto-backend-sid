@@ -6,10 +6,12 @@ const fileSchema = require("../models/file");
 // const reviewRatingSchema = require("../models/reviewRating");
 
 exports.listCompanyContent = async (req, res) => {
+  console.log(req.query, "body");
   const user = req.user;
   const companyId = user.company_id;
 
-  const { filters, page = 1, limit = 10, search } = req.body;
+  const { page = 1, limit = 10 } = req.body;
+  const { filters, search } = req.query;
 
   try {
     const companyDb = await getCompanyDatabase(companyId);
