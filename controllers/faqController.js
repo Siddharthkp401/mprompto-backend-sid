@@ -37,7 +37,7 @@ exports.addFAQ = async (req, res) => {
         abortEarly: false,
       });
       if (error) {
-        return res.status(400).json({
+        return res.status(200).json({
           status: false,
           message: "Validation errors",
           data: error.details.map((err) => err.message),

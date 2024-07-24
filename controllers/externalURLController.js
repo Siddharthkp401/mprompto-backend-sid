@@ -13,7 +13,7 @@ exports.addExternalURL = async (req, res) => {
   const user = req.user;
 
   if (!type || !["single", "multi"].includes(type)) {
-    return res.status(400).json({
+    return res.status(200).json({
       status: false,
       message: "Invalid type specified",
       data: null,
@@ -81,9 +81,9 @@ exports.addExternalURL = async (req, res) => {
       const { file } = req;
 
       if (!file) {
-        return res.status(400).json({
+        return res.status(200).json({
           status: false,
-          message: "Excel file is required",
+          message: "CSV file is required",
           data: null,
         });
       }

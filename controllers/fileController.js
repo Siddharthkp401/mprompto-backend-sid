@@ -7,8 +7,6 @@ exports.addFile = async (req, res) => {
   const { title, pdf_url } = req.body;
   const user = req.user;
 
-  const { filename, path: filepath, size: filesize } = req.file;
-
   const { error } = fileUploadSchema.validate(req.body);
   if (error) {
     return res.status(400).json({
@@ -17,6 +15,16 @@ exports.addFile = async (req, res) => {
       data: null,
     });
   }
+
+  if (!req.file) {
+    return res.status(200).json({
+      status: false,
+      message: "File is required",
+      data: null,
+    });
+  }
+
+  const { filename, path: filepath, size: filesize } = req.file;
 
   try {
     const companyId = user.company_id;
@@ -30,7 +38,7 @@ exports.addFile = async (req, res) => {
 
     const newCompanyContent = new CompanyContent({
       company_id: companyId,
-      content_type: 'Files',
+      content_type: "Files",
       language: "English",
       content_audience: 0,
       is_deleted: false,
@@ -54,7 +62,6 @@ exports.addFile = async (req, res) => {
         updated_at: new Date(),
       });
     }
-
 
     await companyContent.save();
 
