@@ -88,6 +88,7 @@ exports.listCompanyContent = async (req, res) => {
       .skip(skip)
       .limit(Number(limit));
 
+    console.log(companyContents, "91");
     const contentList = companyContents.map((content) => ({
       ...content.toObject(),
       faqs: faqs.filter(

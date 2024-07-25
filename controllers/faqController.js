@@ -20,18 +20,6 @@ exports.addFAQ = async (req, res) => {
       CompanyContentSchema
     );
 
-    // Always create a new CompanyContent record
-    const newCompanyContent = new CompanyContent({
-      company_id: companyId,
-      content_type: "FAQs",
-      language: "English",
-      content_audience: 0,
-      is_deleted: false,
-      created_at: new Date(),
-      updated_at: new Date(),
-    });
-    const savedCompanyContent = await newCompanyContent.save();
-
     if (type === "single") {
       const { error } = singleFAQSchema.validate(req.body, {
         abortEarly: false,
@@ -43,6 +31,17 @@ exports.addFAQ = async (req, res) => {
           data: error.details.map((err) => err.message),
         });
       }
+
+      const newCompanyContent = new CompanyContent({
+        company_id: companyId,
+        content_type: "FAQs",
+        language: "English",
+        content_audience: 0,
+        is_deleted: false,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+      const savedCompanyContent = await newCompanyContent.save();
 
       const newFAQ = new FAQ({
         company_content_id: savedCompanyContent._id,
@@ -86,12 +85,27 @@ exports.addFAQ = async (req, res) => {
       const headers = data[0];
       const rows = data.slice(1);
 
-      const faqs = rows.map((row) => {
+      const savedFAQs = [];
+      const savedCompanyContents = [];
+
+      for (const row of rows) {
         const faqObject = {};
         headers.forEach((header, index) => {
           faqObject[header.toLowerCase()] = row[index];
         });
-        return {
+
+        const newCompanyContent = new CompanyContent({
+          company_id: companyId,
+          content_type: "FAQs",
+          language: "English",
+          content_audience: 0,
+          is_deleted: false,
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
+        const savedCompanyContent = await newCompanyContent.save();
+
+        const newFAQ = new FAQ({
           company_content_id: savedCompanyContent._id,
           title: faqObject["title"],
           question: faqObject["questions"],
@@ -99,10 +113,12 @@ exports.addFAQ = async (req, res) => {
           is_deleted: false,
           created_at: new Date(),
           updated_at: new Date(),
-        };
-      });
+        });
 
-      const savedFAQs = await FAQ.insertMany(faqs);
+        const savedFAQ = await newFAQ.save();
+        savedFAQs.push(savedFAQ);
+        savedCompanyContents.push(savedCompanyContent);
+      }
 
       // Clean up: Delete the uploaded file after processing
       // fs.unlinkSync(filePath);
@@ -112,7 +128,7 @@ exports.addFAQ = async (req, res) => {
         message: "FAQs added successfully",
         data: {
           faqs: savedFAQs,
-          companyContent: savedCompanyContent,
+          companyContents: savedCompanyContents,
         },
       });
     }
