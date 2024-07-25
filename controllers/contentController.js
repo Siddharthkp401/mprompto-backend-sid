@@ -2,7 +2,7 @@ const { getCompanyDatabase } = require("../utils/dbUtil");
 const CompanyContentSchema = require("../models/companyContentSchema");
 const faqSchema = require("../models/faq");
 const externalUrlSchema = require("../models/externalURL");
-const fileSchema = require("../models/file");
+const documentSchema = require("../models/document");
 // const reviewRatingSchema = require("../models/reviewRating");
 
 exports.listCompanyContent = async (req, res) => {
@@ -20,7 +20,7 @@ exports.listCompanyContent = async (req, res) => {
     );
     const FAQ = companyDb.model("FAQ", faqSchema);
     const ExternalURL = companyDb.model("ExternalURL", externalUrlSchema);
-    const File = companyDb.model("File", fileSchema);
+    const File = companyDb.model("Document", documentSchema);
     // const ReviewRating = companyDb.model("ReviewRating", reviewRatingSchema);
 
     const companyContentQuery = {

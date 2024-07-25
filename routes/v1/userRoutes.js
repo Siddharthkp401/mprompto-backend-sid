@@ -5,7 +5,7 @@ const userController = require("../../controllers/userController");
 const registerController = require("../../controllers/registerController");
 const verifyOtpController = require("../../controllers/verifyOtpController");
 const { addExternalURL } = require("../../controllers/externalURLController");
-const { addFile } = require("../../controllers/fileController");
+const { addDocument } = require("../../controllers/documentController");
 const { addFAQ } = require("../../controllers/faqController");
 const { listCompanyContent } = require("../../controllers/contentController");
 const {
@@ -31,7 +31,12 @@ router.post(
   upload.single("file"),
   addExternalURL
 );
-router.post("/add-file", authenticateToken, upload.single("file"), addFile);
+router.post(
+  "/add-document",
+  authenticateToken,
+  upload.single("file"),
+  addDocument
+);
 router.post("/add-faq", authenticateToken, upload.single("file"), addFAQ);
 
 router.get("/content-listing", authenticateToken, listCompanyContent);
@@ -39,7 +44,7 @@ router.get("/content-listing", authenticateToken, listCompanyContent);
 router.post(
   "/customize-data-add",
   authenticateToken,
-  upload.single("logo"), 
+  upload.single("logo"),
   addCustomizationData
 );
 module.exports = router;

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const fileSchema = new Schema({
+const documentSchema = new Schema({
   company_content_id: {
     type: Schema.Types.ObjectId,
     ref: "CompanyContent",
@@ -18,4 +18,4 @@ const fileSchema = new Schema({
   updated_at: { type: Date, default: Date.now },
 });
 
-module.exports = fileSchema;
+module.exports = documentSchema;

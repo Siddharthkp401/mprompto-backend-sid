@@ -1,9 +1,9 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
-const fileSchema = require("../models/file");
+const documentSchema = require("../models/document");
 const CompanyContentSchema = require("../models/companyContentSchema");
 const { fileUploadSchema } = require("../validationSchemas/validationSchemas");
 
-exports.addFile = async (req, res) => {
+exports.addDocument = async (req, res) => {
   const { title, pdf_url } = req.body;
   const user = req.user;
 
@@ -30,7 +30,7 @@ exports.addFile = async (req, res) => {
     const companyId = user.company_id;
 
     const companyDb = await getCompanyDatabase(companyId);
-    const File = companyDb.model("File", fileSchema);
+    const File = companyDb.model("Document", documentSchema);
     const CompanyContent = companyDb.model(
       "CompanyContent",
       CompanyContentSchema
@@ -38,7 +38,7 @@ exports.addFile = async (req, res) => {
 
     const newCompanyContent = new CompanyContent({
       company_id: companyId,
-      content_type: "Files",
+      content_type: "Documents",
       language: "English",
       content_audience: 0,
       is_deleted: false,
