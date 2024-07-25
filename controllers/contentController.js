@@ -6,7 +6,7 @@ const documentSchema = require("../models/document");
 // const reviewRatingSchema = require("../models/reviewRating");
 
 exports.listCompanyContent = async (req, res) => {
-  console.log(req.query, "query");
+  // console.log(req.query, "query");
   const user = req.user;
   const companyId = user.company_id;
 
