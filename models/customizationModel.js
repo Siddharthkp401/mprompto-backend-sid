@@ -20,7 +20,7 @@ const customizationSchema = new mongoose.Schema({
     required: false,
   },
   right_left_px: {
-    type: Number,
+    type: String,
     required: false,
   },
   bottom_top: {
@@ -29,7 +29,7 @@ const customizationSchema = new mongoose.Schema({
     required: false,
   },
   bottom_top_px: {
-    type: Number,
+    type: String,
     required: false,
   },
   heading_size: {
