@@ -115,7 +115,7 @@ exports.listCompanyContent = async (req, res) => {
     const combinedTotalCount = totalFAQs + totalExternalUrls + totalFiles;
 
     if (contentList.length === 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         status: true,
         message: "No company content found",
         data: [],
