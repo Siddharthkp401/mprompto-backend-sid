@@ -6,12 +6,11 @@ const fileSchema = require("../models/file");
 // const reviewRatingSchema = require("../models/reviewRating");
 
 exports.listCompanyContent = async (req, res) => {
-  // console.log(req.query, "body");
+  console.log(req.query, "query");
   const user = req.user;
   const companyId = user.company_id;
 
-  const { page = 1, limit = 10 } = req.body;
-  const { filters, search } = req.query;
+  const { page = 1, limit = 10, filters, search } = req.query;
 
   try {
     const companyDb = await getCompanyDatabase(companyId);
@@ -87,7 +86,7 @@ exports.listCompanyContent = async (req, res) => {
 
     const companyContents = await CompanyContent.find(companyContentQuery)
       .skip(skip)
-      .limit(limit);
+      .limit(Number(limit));
 
     const contentList = companyContents.map((content) => ({
       ...content.toObject(),
@@ -131,15 +130,15 @@ exports.listCompanyContent = async (req, res) => {
       data: contentList,
       pagination: {
         total: contentList.length,
-        page,
-        limit,
+        page: Number(page),
+        limit: Number(limit),
       },
       totalCounts: {
         combinedTotal: combinedTotalCount,
       },
     });
   } catch (error) {
-    // console.error("Error in listCompanyContent:", error);
+    console.error("Error in listCompanyContent:", error);
     return res.status(500).json({
       status: false,
       message: "Internal server error",
