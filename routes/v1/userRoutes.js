@@ -11,6 +11,9 @@ const { listCompanyContent } = require("../../controllers/contentController");
 const {
   addCustomizationData,
 } = require("../../controllers/customizationController");
+const {
+  getTotalCounts,
+} = require("../../controllers/CountController");
 
 const upload = require("../../utils/multerConfig");
 
@@ -47,4 +50,7 @@ router.post(
   upload.single("logo"),
   addCustomizationData
 );
+
+router.get("/total-counts", authenticateToken, getTotalCounts);
+
 module.exports = router;

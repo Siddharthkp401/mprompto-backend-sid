@@ -6,7 +6,6 @@ const documentSchema = require("../models/document");
 // const reviewRatingSchema = require("../models/reviewRating");
 
 exports.listCompanyContent = async (req, res) => {
-  // console.log(req.query, "query");
   const user = req.user;
   const companyId = user.company_id;
 
@@ -43,31 +42,28 @@ exports.listCompanyContent = async (req, res) => {
     let faqQuery = {};
     let externalUrlQuery = {};
     let fileQuery = {};
+    // let reviewRatingQuery = {};
 
     if (search) {
       const regexSearch = { $regex: search, $options: "i" };
       faqQuery.title = regexSearch;
       externalUrlQuery.title = regexSearch;
       fileQuery.title = regexSearch;
+      // reviewRatingQuery.title = regexSearch;
     }
 
-    const faqs = await FAQ.find({
-      ...faqQuery,
-      is_deleted: false,
-    });
-
+    const faqs = await FAQ.find({ ...faqQuery, is_deleted: false });
     const externalUrls = await ExternalURL.find({
       ...externalUrlQuery,
       is_deleted: false,
     });
-
-    const files = await File.find({
-      ...fileQuery,
-      is_deleted: false,
-    });
+    const files = await File.find({ ...fileQuery, is_deleted: false });
+    // const reviewRatings = await ReviewRating.find({
+    //   ...reviewRatingQuery,
+    //   is_deleted: false,
+    // });
 
     const companyContentIds = new Set();
-
     faqs.forEach((faq) =>
       companyContentIds.add(faq.company_content_id.toString())
     );
@@ -77,18 +73,19 @@ exports.listCompanyContent = async (req, res) => {
     files.forEach((file) =>
       companyContentIds.add(file.company_content_id.toString())
     );
+    // reviewRatings.forEach((review) =>
+    //   companyContentIds.add(review.company_content_id.toString())
+    // );
 
     if (companyContentIds.size > 0) {
       companyContentQuery._id = { $in: Array.from(companyContentIds) };
     }
 
     const skip = (page - 1) * limit;
-
     const companyContents = await CompanyContent.find(companyContentQuery)
       .skip(skip)
       .limit(Number(limit));
 
-    console.log(companyContents, "91");
     const contentList = companyContents.map((content) => ({
       ...content.toObject(),
       faqs: faqs.filter(
@@ -111,6 +108,9 @@ exports.listCompanyContent = async (req, res) => {
       is_deleted: false,
     });
     const totalFiles = await File.countDocuments({ is_deleted: false });
+    // const totalReviewRatings = await ReviewRating.countDocuments({
+    //   is_deleted: false,
+    // });
 
     const combinedTotalCount = totalFAQs + totalExternalUrls + totalFiles;
 
@@ -121,6 +121,10 @@ exports.listCompanyContent = async (req, res) => {
         data: [],
         totalCounts: {
           combinedTotal: combinedTotalCount,
+          totalFAQs,
+          totalExternalUrls,
+          totalFiles,
+          // totalReviewRatings,
         },
       });
     }
@@ -136,6 +140,10 @@ exports.listCompanyContent = async (req, res) => {
       },
       totalCounts: {
         combinedTotal: combinedTotalCount,
+        totalFAQs,
+        totalExternalUrls,
+        totalFiles,
+        // totalReviewRatings,
       },
     });
   } catch (error) {
