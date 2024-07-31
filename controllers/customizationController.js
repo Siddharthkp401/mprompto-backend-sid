@@ -28,7 +28,7 @@ exports.addCustomizationData = async (req, res) => {
       data: customization,
     });
   } catch (error) {
-    console.error("Error in addCustomizationData:", error);
+    // console.error("Error in addCustomizationData:", error);
     return res.status(500).json({
       status: false,
       message: "Internal server error",

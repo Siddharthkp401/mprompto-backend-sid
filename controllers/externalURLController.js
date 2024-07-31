@@ -75,62 +75,102 @@ exports.addExternalURL = async (req, res) => {
         },
       });
     } else if (type === "multi") {
-      const { file } = req;
+      const savedUrls = [];
+      const savedCompanyContents = [];
+      let source = "";
 
-      if (!file) {
+      if (content_url) {
+        const urlRegex = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i;
+        const urls = content_url
+          .split(/\r?\n/)
+          .map((url) => url.trim())
+          .filter((url) => urlRegex.test(url) && url);
+
+        if (urls.length === 0) {
+          return res.status(200).json({
+            status: false,
+            message: "No valid URLs found in content_url",
+            data: null,
+          });
+        }
+
+        for (const url of urls) {
+          const newCompanyContent = new CompanyContent({
+            company_id: companyId,
+            content_type: "URLs",
+            language: "English",
+            content_audience: 0,
+            is_deleted: false,
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+          const savedCompanyContent = await newCompanyContent.save();
+
+          const newExternalURL = new ExternalURL({
+            company_content_id: savedCompanyContent._id,
+            title: title || "",
+            content_url: url,
+            is_deleted: false,
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+
+          const savedExternalURL = await newExternalURL.save();
+          savedUrls.push(savedExternalURL);
+          savedCompanyContents.push(savedCompanyContent);
+        }
+        source = "content_url";
+      } else if (req.file) {
+        const filePath = path.join(__dirname, "../uploads", req.file.filename); // eslint-disable-line no-undef
+        const workbook = XLSX.readFile(filePath);
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const urls = XLSX.utils
+          .sheet_to_json(worksheet, { header: 1 })
+          .flat()
+          .filter((url) => {
+            const urlRegex = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i;
+            return urlRegex.test(url);
+          });
+
+        for (const url of urls) {
+          const newCompanyContent = new CompanyContent({
+            company_id: companyId,
+            content_type: "URLs",
+            language: "English",
+            content_audience: 0,
+            is_deleted: false,
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+          const savedCompanyContent = await newCompanyContent.save();
+
+          const newExternalURL = new ExternalURL({
+            company_content_id: savedCompanyContent._id,
+            title: title || "",
+            content_url: url,
+            is_deleted: false,
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+
+          const savedExternalURL = await newExternalURL.save();
+          savedUrls.push(savedExternalURL);
+          savedCompanyContents.push(savedCompanyContent);
+        }
+
+        fs.unlinkSync(filePath);
+        source = "file";
+      } else {
         return res.status(200).json({
           status: false,
-          message: "CSV file is required",
+          message: "CSV file or content URL is required",
           data: null,
         });
       }
 
-      const filePath = path.join(__dirname, "../uploads", req.file.filename); // eslint-disable-line no-undef
-      const workbook = XLSX.readFile(filePath);
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const urls = XLSX.utils
-        .sheet_to_json(worksheet, { header: 1 })
-        .flat()
-        .filter((url) => {
-          const urlRegex = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i;
-          return urlRegex.test(url);
-        });
-
-      const savedUrls = [];
-      const savedCompanyContents = [];
-
-      for (const url of urls) {
-        const newCompanyContent = new CompanyContent({
-          company_id: companyId,
-          content_type: "URLs",
-          language: "English",
-          content_audience: 0,
-          is_deleted: false,
-          created_at: new Date(),
-          updated_at: new Date(),
-        });
-        const savedCompanyContent = await newCompanyContent.save();
-
-        const newExternalURL = new ExternalURL({
-          company_content_id: savedCompanyContent._id,
-          title: title || "",
-          content_url: url,
-          is_deleted: false,
-          created_at: new Date(),
-          updated_at: new Date(),
-        });
-
-        const savedExternalURL = await newExternalURL.save();
-        savedUrls.push(savedExternalURL);
-        savedCompanyContents.push(savedCompanyContent);
-      }
-
-      // Optionally delete the uploaded Excel file after processing
-      fs.unlinkSync(filePath);
-
       return res.status(201).json({
         status: true,
-        message: "Multi External URLs added successfully",
+        message: `Multi External URLs added successfully from ${source}`,
         data: {
           externalURLs: savedUrls,
           companyContents: savedCompanyContents,
@@ -144,7 +184,7 @@ exports.addExternalURL = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Error in addExternalURL:", error);
+    // console.error("Error in addExternalURL:", error);
     res.status(500).json({
       status: false,
       message: "Internal server error",

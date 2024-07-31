@@ -50,7 +50,7 @@ exports.registerUser = async (req, res) => {
       data: null,
     });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({
       status: false,
       message: "Internal server error",

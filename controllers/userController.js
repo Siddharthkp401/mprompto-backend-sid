@@ -18,7 +18,7 @@ exports.updateUserAndCreateCompany = async (req, res) => {
 
   try {
     const user = req.user;
-    console.log(user, "user from DB");
+    // console.log(user, "user from DB");
 
     const { error } = updateUserAndCreateCompanySchema.validate(req.body, {
       abortEarly: false,
@@ -36,7 +36,7 @@ exports.updateUserAndCreateCompany = async (req, res) => {
     user.country_code = country_code;
     user.mobile_number = mobile_number;
     await user.save();
-    console.log(user, "updated user");
+    // console.log(user, "updated user");
 
     const { dbName } = await createCompanyDatabase(company_name);
 
@@ -55,7 +55,7 @@ exports.updateUserAndCreateCompany = async (req, res) => {
 
     user.company_id = savedCompany._id;
     await user.save();
-    console.log(user, "user with company_id");
+    // console.log(user, "user with company_id");
 
     res.status(200).json({
       status: true,
@@ -67,7 +67,7 @@ exports.updateUserAndCreateCompany = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error in updateUserAndCreateCompany:", error);
+    // console.error("Error in updateUserAndCreateCompany:", error);
     res.status(500).json({
       status: false,
       message: "Internal server error",

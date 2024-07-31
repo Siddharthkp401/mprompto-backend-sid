@@ -1,18 +1,20 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
 const CompanyContentSchema = require("../models/companyContentSchema");
 const faqSchema = require("../models/faq");
-// const fs = require("fs");
 const path = require("path");
 const xlsx = require("xlsx");
+const fs = require("fs");
 const { singleFAQSchema } = require("../validationSchemas/validationSchemas");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" }); // Set destination for uploaded files
 
+// Controller method
 exports.addFAQ = async (req, res) => {
   const { title, question, answer, type } = req.body;
   const user = req.user;
 
   try {
     const companyId = user.company_id;
-
     const companyDb = await getCompanyDatabase(companyId);
     const FAQ = companyDb.model("FAQ", faqSchema);
     const CompanyContent = companyDb.model(
@@ -52,7 +54,6 @@ exports.addFAQ = async (req, res) => {
         created_at: new Date(),
         updated_at: new Date(),
       });
-
       const savedFAQ = await newFAQ.save();
 
       return res.status(201).json({
@@ -65,35 +66,71 @@ exports.addFAQ = async (req, res) => {
       });
     }
 
-    // Handle multiple FAQs from Excel file upload
     if (type === "multi") {
-      if (!req.file) {
-        return res.status(200).json({
-          status: false,
-          message: "File is required for multiple FAQs",
-          data: null,
+      if (req.file) {
+        const filePath = path.join(__dirname, "../uploads", req.file.filename);
+        const workbook = xlsx.readFile(filePath);
+        const sheetName = workbook.SheetNames[0];
+        const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], {
+          header: 1,
+          defval: "", // Default value to avoid undefined cells
+        });
+
+        const headers = data[0];
+        const rows = data.slice(1);
+
+        const savedFAQs = [];
+        const savedCompanyContents = [];
+
+        for (const row of rows) {
+          if (row.length < headers.length) {
+            continue;
+          }
+
+          const faqObject = {};
+          headers.forEach((header, index) => {
+            faqObject[header.toLowerCase()] = row[index];
+          });
+
+          const newCompanyContent = new CompanyContent({
+            company_id: companyId,
+            content_type: "FAQs",
+            language: "English",
+            content_audience: 0,
+            is_deleted: false,
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+          const savedCompanyContent = await newCompanyContent.save();
+
+          const newFAQ = new FAQ({
+            company_content_id: savedCompanyContent._id,
+            title: faqObject["title"],
+            question: faqObject["questions"],
+            answer: faqObject["answer"],
+            is_deleted: false,
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+
+          const savedFAQ = await newFAQ.save();
+          savedFAQs.push(savedFAQ);
+          savedCompanyContents.push(savedCompanyContent);
+        }
+
+        fs.unlinkSync(filePath);
+
+        return res.status(201).json({
+          status: true,
+          message: "FAQs added successfully from file",
+          data: {
+            faqs: savedFAQs,
+            companyContents: savedCompanyContents,
+          },
         });
       }
 
-      const filePath = path.join(__dirname, "../uploads", req.file.filename); // eslint-disable-line no-undef
-      const workbook = xlsx.readFile(filePath);
-      const sheetName = workbook.SheetNames[0];
-      const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], {
-        header: 1,
-      });
-
-      const headers = data[0];
-      const rows = data.slice(1);
-
-      const savedFAQs = [];
-      const savedCompanyContents = [];
-
-      for (const row of rows) {
-        const faqObject = {};
-        headers.forEach((header, index) => {
-          faqObject[header.toLowerCase()] = row[index];
-        });
-
+      if (title && question && answer) {
         const newCompanyContent = new CompanyContent({
           company_id: companyId,
           content_type: "FAQs",
@@ -107,29 +144,29 @@ exports.addFAQ = async (req, res) => {
 
         const newFAQ = new FAQ({
           company_content_id: savedCompanyContent._id,
-          title: faqObject["title"],
-          question: faqObject["questions"],
-          answer: faqObject["answer"],
+          title,
+          question,
+          answer,
           is_deleted: false,
           created_at: new Date(),
           updated_at: new Date(),
         });
-
         const savedFAQ = await newFAQ.save();
-        savedFAQs.push(savedFAQ);
-        savedCompanyContents.push(savedCompanyContent);
+
+        return res.status(201).json({
+          status: true,
+          message: "FAQ added successfully",
+          data: {
+            faq: savedFAQ,
+            companyContent: savedCompanyContent,
+          },
+        });
       }
 
-      // Clean up: Delete the uploaded file after processing
-      // fs.unlinkSync(filePath);
-
-      return res.status(201).json({
-        status: true,
-        message: "FAQs added successfully",
-        data: {
-          faqs: savedFAQs,
-          companyContents: savedCompanyContents,
-        },
+      return res.status(200).json({
+        status: false,
+        message: "No file or question-answer data provided for multiple FAQs",
+        data: null,
       });
     }
 
