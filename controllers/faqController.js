@@ -8,9 +8,7 @@ const { singleFAQSchema } = require("../validationSchemas/validationSchemas");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" }); // Set destination for uploaded files
 
-// Controller method
 exports.addFAQ = async (req, res) => {
-  const { title, question, answer, type } = req.body;
   const user = req.user;
 
   try {
@@ -22,7 +20,8 @@ exports.addFAQ = async (req, res) => {
       CompanyContentSchema
     );
 
-    if (type === "single") {
+    if (req.body.type === "single") {
+      const { language, title, question, answer } = req.body;
       const { error } = singleFAQSchema.validate(req.body, {
         abortEarly: false,
       });
@@ -37,7 +36,7 @@ exports.addFAQ = async (req, res) => {
       const newCompanyContent = new CompanyContent({
         company_id: companyId,
         content_type: "FAQs",
-        language: "English",
+        language,
         content_audience: 0,
         is_deleted: false,
         created_at: new Date(),
@@ -66,14 +65,23 @@ exports.addFAQ = async (req, res) => {
       });
     }
 
-    if (type === "multi") {
+    if (req.body.type === "multi") {
       if (req.file) {
+        const { language } = req.body;
+        if (!language) {
+          return res.status(400).json({
+            status: false,
+            message: "Language field is required for file uploads",
+            data: null,
+          });
+        }
+
         const filePath = path.join(__dirname, "../uploads", req.file.filename);
         const workbook = xlsx.readFile(filePath);
         const sheetName = workbook.SheetNames[0];
         const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], {
           header: 1,
-          defval: "", // Default value to avoid undefined cells
+          defval: "",
         });
 
         const headers = data[0];
@@ -95,7 +103,7 @@ exports.addFAQ = async (req, res) => {
           const newCompanyContent = new CompanyContent({
             company_id: companyId,
             content_type: "FAQs",
-            language: "English",
+            language,
             content_audience: 0,
             is_deleted: false,
             created_at: new Date(),
@@ -105,7 +113,6 @@ exports.addFAQ = async (req, res) => {
 
           const newFAQ = new FAQ({
             company_content_id: savedCompanyContent._id,
-            title: faqObject["title"],
             question: faqObject["questions"],
             answer: faqObject["answer"],
             is_deleted: false,
@@ -130,47 +137,73 @@ exports.addFAQ = async (req, res) => {
         });
       }
 
-      if (title && question && answer) {
-        const newCompanyContent = new CompanyContent({
-          company_id: companyId,
-          content_type: "FAQs",
-          language: "English",
-          content_audience: 0,
-          is_deleted: false,
-          created_at: new Date(),
-          updated_at: new Date(),
-        });
-        const savedCompanyContent = await newCompanyContent.save();
+      if (req.body.faqs) {
+        const faqs = JSON.parse(req.body.faqs);
 
-        const newFAQ = new FAQ({
-          company_content_id: savedCompanyContent._id,
-          title,
-          question,
-          answer,
-          is_deleted: false,
-          created_at: new Date(),
-          updated_at: new Date(),
-        });
-        const savedFAQ = await newFAQ.save();
+        if (Array.isArray(faqs)) {
+          const savedFAQs = [];
+          const savedCompanyContents = [];
 
-        return res.status(201).json({
-          status: true,
-          message: "FAQ added successfully",
-          data: {
-            faq: savedFAQ,
-            companyContent: savedCompanyContent,
-          },
+          for (const faqData of faqs) {
+            const { question, answer } = faqData;
+
+            if (!question || !answer) {
+              return res.status(400).json({
+                status: false,
+                message: "Each FAQ must have question, and answer",
+                data: null,
+              });
+            }
+
+            const newCompanyContent = new CompanyContent({
+              company_id: companyId,
+              content_type: "FAQs",
+              content_audience: 0,
+              is_deleted: false,
+              created_at: new Date(),
+              updated_at: new Date(),
+            });
+            const savedCompanyContent = await newCompanyContent.save();
+
+            const newFAQ = new FAQ({
+              company_content_id: savedCompanyContent._id,
+              question,
+              answer,
+              is_deleted: false,
+              created_at: new Date(),
+              updated_at: new Date(),
+            });
+
+            const savedFAQ = await newFAQ.save();
+            savedFAQs.push(savedFAQ);
+            savedCompanyContents.push(savedCompanyContent);
+          }
+
+          return res.status(201).json({
+            status: true,
+            message: "FAQs added successfully",
+            data: {
+              faqs: savedFAQs,
+              companyContents: savedCompanyContents,
+            },
+          });
+        }
+
+        return res.status(200).json({
+          status: false,
+          message: "Invalid FAQs data",
+          data: null,
         });
       }
 
       return res.status(200).json({
         status: false,
-        message: "No file or question-answer data provided for multiple FAQs",
+        message: "No file or FAQ data provided for multiple FAQs",
         data: null,
       });
     }
 
-    return res.status(400).json({
+    return res.status(200).json({
       status: false,
       message: "Invalid type",
       data: null,

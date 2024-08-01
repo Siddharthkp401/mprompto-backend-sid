@@ -89,7 +89,7 @@ exports.addExternalURL = async (req, res) => {
         if (urls.length === 0) {
           return res.status(200).json({
             status: false,
-            message: "No valid URLs found in content_url",
+            message: "No valid URLs found in content url",
             data: null,
           });
         }
@@ -119,7 +119,7 @@ exports.addExternalURL = async (req, res) => {
           savedUrls.push(savedExternalURL);
           savedCompanyContents.push(savedCompanyContent);
         }
-        source = "content_url";
+        source = "content url";
       } else if (req.file) {
         const filePath = path.join(__dirname, "../uploads", req.file.filename); // eslint-disable-line no-undef
         const workbook = XLSX.readFile(filePath);

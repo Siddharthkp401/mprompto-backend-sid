@@ -76,6 +76,10 @@ const singleFAQSchema = Joi.object({
     "string.empty": "Answer is required",
     "any.required": "Answer is required",
   }),
+  language: Joi.string().required().messages({
+    "string.empty": "language is required",
+    "any.required": "language is required",
+  }),
 });
 
 const fileUploadSchema = Joi.object({
