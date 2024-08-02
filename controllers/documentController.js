@@ -1,34 +1,51 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
 const documentSchema = require("../models/document");
 const CompanyContentSchema = require("../models/companyContentSchema");
-const { fileUploadSchema } = require("../validationSchemas/validationSchemas");
+const {
+  fileUploadSchema,
+  fileUrlSchema,
+} = require("../validationSchemas/validationSchemas");
+const fs = require("fs");
 
 exports.addDocument = async (req, res) => {
-  const { title, pdf_url } = req.body;
+  const { title, pdf_url, language } = req.body;
   const user = req.user;
 
-  const { error } = fileUploadSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({
-      status: false,
-      message: error.details[0].message,
-      data: null,
-    });
-  }
-
-  if (!req.file) {
+  if (!req.file && (!pdf_url || !language)) {
     return res.status(200).json({
       status: false,
-      message: "File is required",
+      message:
+        "Either a file or a combination of pdf url and language is required",
       data: null,
     });
   }
 
-  const { filename, path: filepath, size: filesize } = req.file;
+  let validationError;
+  let validationMessage;
+  if (req.file) {
+    const { error } = fileUploadSchema.validate(req.body);
+    validationError = error;
+    validationMessage = "File validation failed";
+  } else {
+    const { error } = fileUrlSchema.validate(req.body);
+    validationError = error;
+    validationMessage = "PDF URL and language validation failed";
+  }
+
+  if (validationError) {
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    return res.status(200).json({
+      status: false,
+      message: validationError.details[0].message,
+      data: null,
+    });
+  }
 
   try {
     const companyId = user.company_id;
-
     const companyDb = await getCompanyDatabase(companyId);
     const File = companyDb.model("Document", documentSchema);
     const CompanyContent = companyDb.model(
@@ -39,7 +56,7 @@ exports.addDocument = async (req, res) => {
     const newCompanyContent = new CompanyContent({
       company_id: companyId,
       content_type: "Documents",
-      language: "English",
+      language: language || "English",
       content_audience: 0,
       is_deleted: false,
       created_at: new Date(),
@@ -48,46 +65,43 @@ exports.addDocument = async (req, res) => {
 
     const savedCompanyContent = await newCompanyContent.save();
 
-    let companyContent = await CompanyContent.findOne({
-      company_id: companyId,
-    });
-
-    if (!companyContent) {
-      companyContent = new CompanyContent({
-        company_id: companyId,
-        language: "English",
-        content_audience: 0,
-        is_deleted: false,
-        created_at: new Date(),
-        updated_at: new Date(),
-      });
-    }
-
-    await companyContent.save();
-
     const newFileData = {
       company_content_id: savedCompanyContent._id,
-      filename,
-      filepath,
-      filesize,
-      pdf_url,
+      filename: req.file ? req.file.filename : "",
+      filepath: req.file ? req.file.path : "",
+      filesize: req.file ? req.file.size : 0,
+      pdf_url: pdf_url || "",
+      language: language || "English",
       is_deleted: false,
       created_at: new Date(),
       updated_at: new Date(),
     };
 
-    newFileData.title = title || "";
+    if (title) newFileData.title = title;
 
     const newFile = new File(newFileData);
     const savedFile = await newFile.save();
 
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    const successMessage = req.file
+      ? "File added successfully"
+      : "PDF URL and language added successfully";
+
     res.status(201).json({
       status: true,
-      message: "File added successfully",
+      message: successMessage,
       data: savedFile,
     });
   } catch (error) {
-    console.error("Error in addFile:", error);
+    console.error("Error in addDocument:", error);
+
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
+
     res.status(500).json({
       status: false,
       message: "Internal server error",

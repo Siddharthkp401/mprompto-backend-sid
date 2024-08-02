@@ -8,10 +8,36 @@ const documentSchema = new Schema({
     required: true,
   },
   title: { type: String, default: "" },
-  filename: { type: String, required: true },
-  filepath: { type: String, required: true },
-  filesize: { type: String, required: true },
-  pdf_url: { type: String, default: "", required: false },
+  filename: {
+    type: String,
+    required: function () {
+      return !this.pdf_url;
+    },
+  },
+  filepath: {
+    type: String,
+    required: function () {
+      return !this.pdf_url;
+    },
+  },
+  filesize: {
+    type: String,
+    required: function () {
+      return !this.pdf_url;
+    },
+  },
+  pdf_url: {
+    type: String,
+    required: function () {
+      return !this.filename && !this.filepath && !this.filesize;
+    },
+  },
+  language: {
+    type: String,
+    required: function () {
+      return !!this.pdf_url;
+    },
+  },
   is_deleted: { type: Boolean, default: false },
   deleted_at: { type: Date, default: null },
   created_at: { type: Date, default: Date.now },

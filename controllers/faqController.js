@@ -6,7 +6,7 @@ const xlsx = require("xlsx");
 const fs = require("fs");
 const { singleFAQSchema } = require("../validationSchemas/validationSchemas");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" }); // Set destination for uploaded files
+const upload = multer({ dest: "uploads/" }); 
 
 exports.addFAQ = async (req, res) => {
   const user = req.user;

@@ -95,6 +95,12 @@ const fileUploadSchema = Joi.object({
   }),
 });
 
+const fileUrlSchema = Joi.object({
+  title: Joi.string().optional(),
+  pdf_url: Joi.string().uri().required(),
+  language: Joi.string().required(),
+});
+
 module.exports = {
   registerUserSchema,
   verifyOTPSchema,
@@ -102,4 +108,5 @@ module.exports = {
   externalUrlValidationSchema,
   singleFAQSchema,
   fileUploadSchema,
+  fileUrlSchema,
 };
