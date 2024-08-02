@@ -6,7 +6,7 @@ const xlsx = require("xlsx");
 const fs = require("fs");
 const { singleFAQSchema } = require("../validationSchemas/validationSchemas");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" }); 
+const upload = multer({ dest: "uploads/" });
 
 exports.addFAQ = async (req, res) => {
   const user = req.user;
@@ -69,7 +69,7 @@ exports.addFAQ = async (req, res) => {
       if (req.file) {
         const { language } = req.body;
         if (!language) {
-          return res.status(400).json({
+          return res.status(200).json({
             status: false,
             message: "Language field is required for file uploads",
             data: null,
@@ -148,7 +148,7 @@ exports.addFAQ = async (req, res) => {
             const { question, answer } = faqData;
 
             if (!question || !answer) {
-              return res.status(400).json({
+              return res.status(200).json({
                 status: false,
                 message: "Each FAQ must have question, and answer",
                 data: null,
