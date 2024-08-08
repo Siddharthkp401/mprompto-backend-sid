@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
@@ -10,12 +12,20 @@ const transporter = nodemailer.createTransport({
   logger: true,
 });
 
-const sendMail = async (to, subject, text) => {
+const sendMail = async (to, subject, otp) => {
+  const templatePath = path.join(
+    __dirname,
+    "../utils/templates/otpTemplate.html"
+  );
+  let html = fs.readFileSync(templatePath, "utf8");
+
+  html = html.replace("{{OTP}}", otp);
+
   const mailOptions = {
     from: process.env.EMAIL_USERNAME, // eslint-disable-line no-undef
     to,
     subject,
-    text,
+    html,
   };
 
   try {
