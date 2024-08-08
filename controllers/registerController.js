@@ -9,7 +9,7 @@ exports.registerUser = async (req, res) => {
   try {
     const { error } = registerUserSchema.validate(req.body);
     if (error) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
         message: error.details[0].message,
         data: null,
@@ -39,18 +39,20 @@ exports.registerUser = async (req, res) => {
 
     // Generate OTP and send via email
     const otp = await saveOTP(email, mobile_number, user._id);
-    // await sendMail(
-    await (email,
-    "OTP for Registration",
-    `Your OTP for registration is: ${otp}`);
+
+    await sendMail(
+      email,
+      "OTP for Registration",
+      `Your OTP for registration is: ${otp}`
+    );
 
     res.status(200).json({
       status: true,
-      message: "Otp sent successfully",
+      message: "OTP sent successfully",
       data: null,
     });
   } catch (error) {
-    // console.error(error);
+    console.error(error); 
     res.status(500).json({
       status: false,
       message: "Internal server error",
