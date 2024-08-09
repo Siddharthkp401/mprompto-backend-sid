@@ -25,13 +25,24 @@ exports.addFAQ = async (req, res) => {
       const { error } = singleFAQSchema.validate(req.body, {
         abortEarly: false,
       });
+
       if (error) {
+        const errorMessages = error.details
+          .map((err) => err.message)
+          .join(", ");
         return res.status(200).json({
           status: false,
-          message: "Validation errors",
-          data: error.details.map((err) => err.message),
+          message: errorMessages,
+          data: null,
         });
       }
+      // if (error) {
+      //   return res.status(200).json({
+      //     status: false,
+      //     message: "Validation errors",
+      //     data: error.details.map((err) => err.message),
+      //   });
+      // }
 
       const newCompanyContent = new CompanyContent({
         company_id: companyId,
