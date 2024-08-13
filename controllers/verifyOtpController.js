@@ -61,7 +61,7 @@ exports.verifyOTP = async (req, res) => {
       message: "OTP verified successfully",
       data: {
         token: accessToken,
-        is_login: !!user.company_id,
+        is_register: !!user.company_id,
       },
     });
   } catch (error) {

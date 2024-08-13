@@ -59,7 +59,7 @@ exports.updateUserAndCreateCompany = async (req, res) => {
 
     res.status(200).json({
       status: true,
-      message: "User updated and company created successfully",
+      message: "Company registration successfully",
       data: {
         user,
         // companyContent,

@@ -18,17 +18,24 @@ exports.registerUser = async (req, res) => {
 
     const { email, country_code, mobile_number, fullname } = req.body;
 
-    // Check if user with the same email already exists
     let user = await User.findOne({ email });
+
     if (user) {
+      const otp = await saveOTP(email, mobile_number, user._id);
+
+      await sendMail(
+        email,
+        "OTP for Registration",
+        `Your OTP for registration is: ${otp}`
+      );
+
       return res.status(200).json({
-        status: false,
-        message: "User already exists",
+        status: true,
+        message: "User already exists, OTP sent successfully",
         data: null,
       });
     }
 
-    // Create new user
     user = new User({
       email,
       country_code,
@@ -37,7 +44,6 @@ exports.registerUser = async (req, res) => {
     });
     await user.save();
 
-    // Generate OTP and send via email
     const otp = await saveOTP(email, mobile_number, user._id);
 
     await sendMail(
@@ -48,11 +54,11 @@ exports.registerUser = async (req, res) => {
 
     res.status(200).json({
       status: true,
-      message: "OTP sent successfully",
+      message: "OTP sent successfuly",
       data: null,
     });
   } catch (error) {
-    console.error(error); 
+    console.error(error);
     res.status(500).json({
       status: false,
       message: "Internal server error",
