@@ -5,7 +5,7 @@ const Company = require("../models/companySchema");
 const { createCompanyDatabase } = require("../utils/createCompanyDatabase");
 
 exports.updateUserAndCreateCompany = async (req, res) => {
-  console.log(req.user, "user from token");
+  // console.log(req.user, "user from token");
   const {
     name,
     country_code,

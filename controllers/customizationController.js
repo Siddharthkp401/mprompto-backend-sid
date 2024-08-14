@@ -6,7 +6,7 @@ exports.addCustomizationData = async (req, res) => {
   const companyId = user.company_id;
 
   const customizationData = req.body;
-  console.log(customizationData, "customization");
+  // console.log(customizationData, "customization");
   const logo = req.file ? req.file.path : "";
 
   try {

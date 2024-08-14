@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { authenticateToken } = require("../../middleware/authenticate");
 const userController = require("../../controllers/userController");
+const viewProfileController = require("../../controllers/viewProfileController");
+const updateProfileController = require("../../controllers/updateProfileController");
 const registerController = require("../../controllers/registerController");
 const verifyOtpController = require("../../controllers/verifyOtpController");
 const { addExternalURL } = require("../../controllers/externalURLController");
@@ -11,9 +13,7 @@ const { listCompanyContent } = require("../../controllers/contentController");
 const {
   addCustomizationData,
 } = require("../../controllers/customizationController");
-const {
-  getTotalCounts,
-} = require("../../controllers/CountController");
+const { getTotalCounts } = require("../../controllers/CountController");
 
 const upload = require("../../utils/multerConfig");
 
@@ -26,6 +26,18 @@ router.put(
   "/save-basic-information",
   authenticateToken,
   userController.updateUserAndCreateCompany
+);
+
+router.get(
+  "/view-profile",
+  authenticateToken,
+  viewProfileController.viewProfile
+);
+
+router.post(
+  "/update-profile",
+  authenticateToken,
+  updateProfileController.updateProfile
 );
 
 router.post(
