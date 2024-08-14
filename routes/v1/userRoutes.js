@@ -16,6 +16,7 @@ const {
 const { getTotalCounts } = require("../../controllers/CountController");
 
 const upload = require("../../utils/multerConfig");
+const { logoutUser } = require("../../controllers/logoutController");
 
 // Public routes
 router.post("/check-mail", registerController.registerUser);
@@ -34,9 +35,10 @@ router.get(
   viewProfileController.viewProfile
 );
 
-router.post(
+router.put(
   "/update-profile",
   authenticateToken,
+  upload.single("profilePicture"),
   updateProfileController.updateProfile
 );
 
@@ -64,5 +66,7 @@ router.post(
 );
 
 router.get("/total-counts", authenticateToken, getTotalCounts);
+
+router.post("/logout", authenticateToken, logoutUser);
 
 module.exports = router;

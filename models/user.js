@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   country_code: { type: String, default: "" },
   mobile_number: { type: String, default: "" },
   name: { type: String, default: "" },
+  profile_picture: { type: String, default: "" },
   access_token: { type: String },
   email_verified: { type: Boolean, default: false },
   otp_verified: { type: Boolean, default: false },
