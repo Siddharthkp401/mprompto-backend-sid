@@ -1,9 +1,15 @@
 const User = require("../models/user");
+const Company = require("../models/companySchema");
 
 exports.viewProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const user = await User.findById(userId);
+
+    const user = await User.findById(userId).populate({
+      path: "company_id",
+      model: "Company",
+      select: "company_name",
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -22,7 +28,9 @@ exports.viewProfile = async (req, res) => {
         mobile_number: user.mobile_number,
         name: user.name,
         role_id: user.role_id,
-        company_id: user.company_id,
+        profile_picture: user.profile_picture,
+        company_id: user.company_id ? user.company_id._id : null,
+        company_name: user.company_id ? user.company_id.company_name : null,
         email_verified: user.email_verified,
         otp_verified: user.otp_verified,
       },
