@@ -41,7 +41,7 @@ exports.registerUser = async (req, res) => {
       country_code,
       mobile_number,
       fullname,
-      profile_picture: "default-profile.png",
+      profile_picture: "",
     });
     await user.save();
 
