@@ -5,7 +5,7 @@ exports.updateProfile = async (req, res) => {
     const userId = req.user.id;
 
     const { name, country_code, mobile_number } = req.body;
-    const profilePicture = req.file ? req.file.filename : null; 
+    const profilePicture = req.file ? req.file.filename : null;
 
     const updateData = {
       name,
@@ -15,7 +15,7 @@ exports.updateProfile = async (req, res) => {
     };
 
     if (profilePicture) {
-      updateData.profile_picture = profilePicture; 
+      updateData.profile_picture = profilePicture;
     }
 
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {

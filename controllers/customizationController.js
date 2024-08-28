@@ -1,3 +1,4 @@
+const path = require("path");
 const { getCompanyDatabase } = require("../utils/dbUtil");
 const Customization = require("../models/customizationModel");
 
@@ -7,7 +8,7 @@ exports.addCustomizationData = async (req, res) => {
 
   const customizationData = req.body;
   // console.log(customizationData, "customization");
-  const logo = req.file ? req.file.path : "";
+  const logo = req.file ? path.basename(req.file.path) : "";
 
   try {
     const companyDb = await getCompanyDatabase(companyId);
