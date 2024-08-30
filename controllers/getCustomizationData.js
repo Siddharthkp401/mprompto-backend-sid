@@ -12,17 +12,22 @@ exports.getCustomizationData = async (req, res) => {
       customizationModel.schema
     );
 
-    const customization = await CustomizationModel.findOne({
+    let customization = await CustomizationModel.findOne({
       company_id: companyId,
       is_deleted: false,
     });
 
     if (!customization) {
-      return res.status(404).json({
-        status: false,
-        message: "Customization data not found",
-        data: null,
-      });
+      customization = {
+        brand_color_code: "#292929",
+        right_left: "Right",
+        right_left_px: "20px",
+        bottom_top_px: "20px",
+        heading_size: "26px",
+        font_size: "18px",
+        actions_color_code: "#555555",
+        logo: null,
+      };
     }
 
     return res.status(200).json({
