@@ -1,9 +1,18 @@
+const { updateUserSchema } = require("../validationSchemas/validationSchemas");
 const User = require("../models/user");
 
 exports.updateProfile = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const { error } = updateUserSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({
+        status: false,
+        message: error.details[0].message,
+        data: null,
+      });
+    }
 
+    const userId = req.user.id;
     const { name, country_code, mobile_number } = req.body;
     const profilePicture = req.file ? req.file.filename : null;
 

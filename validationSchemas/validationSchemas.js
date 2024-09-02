@@ -101,6 +101,16 @@ const fileUrlSchema = Joi.object({
   language: Joi.string().required(),
 });
 
+const updateUserSchema = Joi.object({
+  name: Joi.string().required().messages({
+    "any.required": "Name is required",
+  }),
+  country_code: Joi.string().optional(),
+  mobile_number: Joi.string().required().messages({
+    "any.required": "Mobile number is required",
+  }),
+});
+
 module.exports = {
   registerUserSchema,
   verifyOTPSchema,
@@ -109,4 +119,5 @@ module.exports = {
   singleFAQSchema,
   fileUploadSchema,
   fileUrlSchema,
+  updateUserSchema,
 };
