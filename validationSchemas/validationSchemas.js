@@ -109,6 +109,7 @@ const updateUserSchema = Joi.object({
   mobile_number: Joi.string().required().messages({
     "any.required": "Mobile number is required",
   }),
+  profilePicture: Joi.any().optional(),
 });
 
 module.exports = {
