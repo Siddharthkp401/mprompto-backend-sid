@@ -1,5 +1,5 @@
 const { updateUserSchema } = require("../validationSchemas/validationSchemas");
-const User = require("../models/user");
+const User = require("../models/user.schema");
 
 exports.updateProfile = async (req, res) => {
   try {

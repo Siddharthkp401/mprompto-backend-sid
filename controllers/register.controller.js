@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require("../models/user.schema");
 const { saveOTP } = require("../utils/otp");
 const { sendMail } = require("../utils/email");
 const {

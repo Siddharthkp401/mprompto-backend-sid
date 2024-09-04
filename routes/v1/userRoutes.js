@@ -1,27 +1,27 @@
 const express = require("express");
 const router = express.Router();
 const { authenticateToken } = require("../../middleware/authenticate");
-const userController = require("../../controllers/userController");
-const viewProfileController = require("../../controllers/viewProfileController");
-const updateProfileController = require("../../controllers/updateProfileController");
-const registerController = require("../../controllers/registerController");
-const verifyOtpController = require("../../controllers/verifyOtpController");
-const { addExternalURL } = require("../../controllers/externalURLController");
-const { addDocument } = require("../../controllers/documentController");
-const { addFAQ } = require("../../controllers/faqController");
-const { listCompanyContent } = require("../../controllers/contentController");
+const userController = require("../../controllers/user.controller");
+const viewProfileController = require("../../controllers/viewProfile.controller");
+const updateProfileController = require("../../controllers/updateProfile.controller");
+const registerController = require("../../controllers/register.controller");
+const verifyOtpController = require("../../controllers/verifyOtp.controller");
+const { addExternalURL } = require("../../controllers/externalURL.Controller");
+const { addDocument } = require("../../controllers/document.controller");
+const { addFAQ } = require("../../controllers/faq.controller");
+const { listCompanyContent } = require("../../controllers/content.controller");
 const {
   addCustomizationData,
-} = require("../../controllers/customizationController");
+} = require("../../controllers/customization.controller");
 
 const {
   getCustomizationData,
-} = require("../../controllers/getCustomizationData");
+} = require("../../controllers/getCustomizationData.controller");
 
-const { getTotalCounts } = require("../../controllers/CountController");
+const { getTotalCounts } = require("../../controllers/count.controller");
 
 const upload = require("../../utils/multerConfig");
-const { logoutUser } = require("../../controllers/logoutController");
+const { logoutUser } = require("../../controllers/logout.controller");
 
 // Public routes
 router.post("/check-mail", registerController.registerUser);

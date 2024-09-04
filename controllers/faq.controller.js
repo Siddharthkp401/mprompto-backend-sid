@@ -1,6 +1,6 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
-const CompanyContentSchema = require("../models/companyContentSchema");
-const faqSchema = require("../models/faq");
+const CompanyContentSchema = require("../models/companyContent.schema");
+const faqSchema = require("../models/faq.schema");
 const path = require("path");
 const xlsx = require("xlsx");
 const fs = require("fs");

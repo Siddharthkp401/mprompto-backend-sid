@@ -1,5 +1,5 @@
-const User = require("../models/user");
-const Token = require("../models/token");
+const User = require("../models/user.schema");
+const Token = require("../models/token.schema");
 const { generateAccessToken } = require("../config/jwt");
 const { verifyOTP } = require("../utils/otp");
 const { verifyOTPSchema } = require("../validationSchemas/validationSchemas");

@@ -1,7 +1,7 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
-const faqSchema = require("../models/faq");
-const externalUrlSchema = require("../models/externalURL");
-const documentSchema = require("../models/document");
+const faqSchema = require("../models/faq.schema");
+const externalUrlSchema = require("../models/externalURL.schema");
+const documentSchema = require("../models/document.schema");
 // const reviewRatingSchema = require("../models/reviewRating");
 
 exports.getTotalCounts = async (req, res) => {

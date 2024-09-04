@@ -1,5 +1,5 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
-const customizationModel = require("../models/customizationModel");
+const customizationModel = require("../models/customization.schema");
 
 exports.getCustomizationData = async (req, res) => {
   const user = req.user;

@@ -1,8 +1,8 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
-const CompanyContentSchema = require("../models/companyContentSchema");
-const faqSchema = require("../models/faq");
-const externalUrlSchema = require("../models/externalURL");
-const documentSchema = require("../models/document");
+const CompanyContentSchema = require("../models/companyContent.schema");
+const faqSchema = require("../models/faq.schema");
+const externalUrlSchema = require("../models/externalURL.schema");
+const documentSchema = require("../models/document.schema");
 // const reviewRatingSchema = require("../models/reviewRating");
 
 exports.listCompanyContent = async (req, res) => {

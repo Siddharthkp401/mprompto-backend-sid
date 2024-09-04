@@ -1,6 +1,6 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
-const documentSchema = require("../models/document");
-const CompanyContentSchema = require("../models/companyContentSchema");
+const documentSchema = require("../models/document.schema");
+const CompanyContentSchema = require("../models/companyContent.schema");
 const {
   fileUploadSchema,
   fileUrlSchema,
@@ -88,7 +88,7 @@ exports.addDocument = async (req, res) => {
 
     const successMessage = req.file
       ? "File added successfully"
-      : "PDF URL and language added successfully";
+      : "PDF url and language added successfully";
 
     res.status(201).json({
       status: true,

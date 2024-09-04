@@ -1,6 +1,6 @@
 const path = require("path");
 const { getCompanyDatabase } = require("../utils/dbUtil");
-const Customization = require("../models/customizationModel");
+const Customization = require("../models/customization.schema");
 
 exports.addCustomizationData = async (req, res) => {
   const user = req.user;

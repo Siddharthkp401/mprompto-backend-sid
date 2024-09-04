@@ -1,4 +1,4 @@
-const OTP = require("../models/otp");
+const OTP = require("../models/otp.schema");
 
 const generateOTP = () => {
   return Math.floor(1000 + Math.random() * 9000).toString();

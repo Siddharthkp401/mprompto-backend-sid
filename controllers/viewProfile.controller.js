@@ -1,5 +1,5 @@
-const User = require("../models/user");
-const Company = require("../models/companySchema");
+const User = require("../models/user.schema");
+const Company = require("../models/company.schema");
 
 exports.viewProfile = async (req, res) => {
   try {

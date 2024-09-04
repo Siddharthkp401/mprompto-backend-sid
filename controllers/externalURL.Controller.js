@@ -1,6 +1,6 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
-const externalUrlSchema = require("../models/externalURL");
-const companyContentSchema = require("../models/companyContentSchema"); // Adjusted case
+const externalUrlSchema = require("../models/externalURL.schema");
+const companyContentSchema = require("../models/companyContent.schema"); // Adjusted case
 const fs = require("fs");
 const XLSX = require("xlsx");
 const path = require("path");
@@ -68,7 +68,7 @@ exports.addExternalURL = async (req, res) => {
 
       return res.status(201).json({
         status: true,
-        message: "Single External URL added successfully",
+        message: "Single external url added successfully",
         data: {
           externalURL: savedExternalURL,
           companyContent: savedCompanyContent,
@@ -89,7 +89,7 @@ exports.addExternalURL = async (req, res) => {
         if (urls.length === 0) {
           return res.status(200).json({
             status: false,
-            message: "No valid URLs found in content url",
+            message: "No valid urls found in content url",
             data: null,
           });
         }
@@ -163,14 +163,14 @@ exports.addExternalURL = async (req, res) => {
       } else {
         return res.status(200).json({
           status: false,
-          message: "CSV file or content URL is required",
+          message: "CSV file or content url is required",
           data: null,
         });
       }
 
       return res.status(201).json({
         status: true,
-        message: `Multi External URLs added successfully from ${source}`,
+        message: `Multi external urls added successfully from ${source}`,
         data: {
           externalURLs: savedUrls,
           companyContents: savedCompanyContents,
