@@ -31,7 +31,7 @@ exports.registerUser = async (req, res) => {
 
       return res.status(200).json({
         status: true,
-        message: "User already exists, OTP sent successfully",
+        message: "OTP sent successfully",
         data: null,
       });
     }
