@@ -1,5 +1,5 @@
-const User = require("../models/user");
-const Token = require("../models/token");
+const User = require("../models/user.schema");
+const Token = require("../models/token.schema");
 const { generateAccessToken } = require("../config/jwt");
 const { verifyOTP } = require("../utils/otp");
 const { verifyOTPSchema } = require("../validationSchemas/validationSchemas");
@@ -17,6 +17,7 @@ exports.verifyOTP = async (req, res) => {
 
     const { email, otp } = value;
 
+    // Check if the user exists first
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({
@@ -27,7 +28,15 @@ exports.verifyOTP = async (req, res) => {
     }
 
     // Verify OTP
-    await verifyOTP(email, otp);
+    try {
+      await verifyOTP(email, otp);
+    } catch (otpError) {
+      return res.status(200).json({
+        status: false,
+        message: otpError.message,
+        data: null,
+      });
+    }
 
     user.email_verified = true;
     user.otp_verified = true;
@@ -52,20 +61,11 @@ exports.verifyOTP = async (req, res) => {
       message: "OTP verified successfully",
       data: {
         token: accessToken,
-        is_login: !!user.company_id,
+        is_register: !!user.company_id,
       },
     });
   } catch (error) {
     console.error(error);
-
-    if (error.message === "Invalid OTP or OTP expired") {
-      return res.status(400).json({
-        status: false,
-        message: error.message,
-        data: null,
-      });
-    }
-
     res.status(500).json({
       status: false,
       message: "Internal server error",

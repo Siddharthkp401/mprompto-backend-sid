@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const CompanyContentSchema = require("../models/CompanyContentSchema");
-const Company = require("../models/CompanySchema");
+const CompanyContentSchema = require("../models/companyContent.schema");
+const Company = require("../models/company.schema");
 
 const createCompanyDatabase = async (companyName) => {
   try {
@@ -19,7 +19,7 @@ const createCompanyDatabase = async (companyName) => {
       .replace(/\s+/g, "_")}`;
     const dbUri = `mongodb://localhost:27017/${dbName}`;
 
-    console.log(dbUri, "dbUri");
+    // console.log(dbUri, "dbUri");
 
     // Create or reuse the connection
     const companyDb = mongoose.createConnection(

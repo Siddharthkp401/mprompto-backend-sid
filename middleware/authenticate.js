@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config/jwt");
-const User = require("../models/user");
+const User = require("../models/user.schema");
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -20,7 +20,7 @@ const authenticateToken = (req, res, next) => {
 
   jwt.verify(token, JWT_SECRET, async (err, decoded) => {
     if (err) {
-      console.error("Error verifying token:", err); // Log the error
+      console.error("Error verifying token:", err);
       return res.status(403).json({
         status: false,
         message: "Invalid token",
@@ -35,10 +35,10 @@ const authenticateToken = (req, res, next) => {
       }
 
       req.user = user;
-      console.log("Authenticated user:", user); // Log the authenticated user
+      // console.log("Authenticated user:", user); // Log the authenticated user
       next();
     } catch (error) {
-      console.error("Error finding user:", error); // Log the error
+      // console.error("Error finding user:", error); // Log the error
       res.status(500).json({
         status: false,
         message: "Internal server error",

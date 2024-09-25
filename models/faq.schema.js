@@ -1,27 +1,26 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-const CompanyContentSchema = new Schema({
-  company_id: {
-    type: Schema.Types.ObjectId,
-    ref: "Company",
+const faqSchema = new mongoose.Schema({
+  company_content_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "CompanyContent",
     required: true,
   },
-  content_type: {
-    type: Number,
-    required: true,
-  },
-  language: {
+  title: {
     type: String,
-    default: "English",
+    required: false,
   },
-  content_state: {
-    type: Number,
+  question: {
+    type: String,
     required: true,
   },
-  content_audience: {
-    type: Number,
+  answer: {
+    type: String,
     required: true,
+  },
+  file: {
+    type: String,
+    default: "",
   },
   is_deleted: {
     type: Boolean,
@@ -41,4 +40,4 @@ const CompanyContentSchema = new Schema({
   },
 });
 
-module.exports = CompanyContentSchema;
+module.exports = faqSchema;

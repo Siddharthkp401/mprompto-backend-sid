@@ -1,13 +1,13 @@
 const {
   updateUserAndCreateCompanySchema,
 } = require("../validationSchemas/validationSchemas");
-const Company = require("../models/CompanySchema");
+const Company = require("../models/company.schema");
 const { createCompanyDatabase } = require("../utils/createCompanyDatabase");
 
 exports.updateUserAndCreateCompany = async (req, res) => {
-  console.log(req.user, "user from token");
+  // console.log(req.user, "user from token");
   const {
-    fullname,
+    name,
     country_code,
     mobile_number,
     company_name,
@@ -18,13 +18,13 @@ exports.updateUserAndCreateCompany = async (req, res) => {
 
   try {
     const user = req.user;
-    console.log(user, "user from DB");
+    // console.log(user, "user from DB");
 
     const { error } = updateUserAndCreateCompanySchema.validate(req.body, {
       abortEarly: false,
     });
     if (error) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
         message: "Validation error",
         errors: error.details.map((detail) => detail.message),
@@ -32,15 +32,13 @@ exports.updateUserAndCreateCompany = async (req, res) => {
       });
     }
 
-    user.fullname = fullname;
+    user.name = name;
     user.country_code = country_code;
     user.mobile_number = mobile_number;
     await user.save();
-    console.log(user, "updated user");
+    // console.log(user, "updated user");
 
-    const { dbName, CompanyContent } = await createCompanyDatabase(
-      company_name
-    );
+    const { dbName } = await createCompanyDatabase(company_name);
 
     const newCompany = new Company({
       user_id: user._id,
@@ -55,33 +53,21 @@ exports.updateUserAndCreateCompany = async (req, res) => {
     });
     const savedCompany = await newCompany.save();
 
-    const companyContent = new CompanyContent({
-      company_id: savedCompany._id,
-      content_type: 0,
-      language: "English",
-      content_state: 1,
-      content_audience: 0,
-      is_deleted: false,
-      created_at: new Date(),
-      updated_at: new Date(),
-    });
-    await companyContent.save();
-
     user.company_id = savedCompany._id;
     await user.save();
-    console.log(user, "user with company_id");
+    // console.log(user, "user with company_id");
 
     res.status(200).json({
       status: true,
-      message: "User updated and company created successfully",
+      message: "Company registration successfully",
       data: {
         user,
-        companyContent,
+        // companyContent,
         company: savedCompany,
       },
     });
   } catch (error) {
-    console.error("Error in updateUserAndCreateCompany:", error);
+    // console.error("Error in updateUserAndCreateCompany:", error);
     res.status(500).json({
       status: false,
       message: "Internal server error",

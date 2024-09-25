@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Company = require("../models/CompanySchema");
+const Company = require("../models/company.schema");
 
 const getCompanyDatabase = async (companyId) => {
   // Fetch the company from the master database
