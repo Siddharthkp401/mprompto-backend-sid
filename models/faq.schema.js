@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const faqSchema = new mongoose.Schema({
+  company_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Company",
+    required: true,
+  },
   company_content_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "CompanyContent",

@@ -12,37 +12,23 @@ exports.addFAQ = async (req, res) => {
   const user = req.user;
 
   try {
-    const companyId = user.company_id;
+    const companyId = user.company_id; 
     const companyDb = await getCompanyDatabase(companyId);
     const FAQ = companyDb.model("FAQ", faqSchema);
-    const CompanyContent = companyDb.model(
-      "CompanyContent",
-      CompanyContentSchema
-    );
+    const CompanyContent = companyDb.model("CompanyContent", CompanyContentSchema);
 
     if (req.body.type === "single") {
       const { language, title, question, answer } = req.body;
-      const { error } = singleFAQSchema.validate(req.body, {
-        abortEarly: false,
-      });
+      const { error } = singleFAQSchema.validate(req.body, { abortEarly: false });
 
       if (error) {
-        const errorMessages = error.details
-          .map((err) => err.message)
-          .join(", ");
+        const errorMessages = error.details.map((err) => err.message).join(", ");
         return res.status(200).json({
           status: false,
           message: errorMessages,
           data: null,
         });
       }
-      // if (error) {
-      //   return res.status(200).json({
-      //     status: false,
-      //     message: "Validation errors",
-      //     data: error.details.map((err) => err.message),
-      //   });
-      // }
 
       const newCompanyContent = new CompanyContent({
         company_id: companyId,
@@ -56,6 +42,7 @@ exports.addFAQ = async (req, res) => {
       const savedCompanyContent = await newCompanyContent.save();
 
       const newFAQ = new FAQ({
+        company_id: companyId,
         company_content_id: savedCompanyContent._id,
         title,
         question,
@@ -123,6 +110,7 @@ exports.addFAQ = async (req, res) => {
           const savedCompanyContent = await newCompanyContent.save();
 
           const newFAQ = new FAQ({
+            company_id: companyId,
             company_content_id: savedCompanyContent._id,
             question: faqObject["questions"],
             answer: faqObject["answer"],
@@ -161,7 +149,7 @@ exports.addFAQ = async (req, res) => {
             if (!question || !answer) {
               return res.status(200).json({
                 status: false,
-                message: "Each FAQ must have question, and answer",
+                message: "Each FAQ must have question and answer",
                 data: null,
               });
             }
@@ -177,6 +165,7 @@ exports.addFAQ = async (req, res) => {
             const savedCompanyContent = await newCompanyContent.save();
 
             const newFAQ = new FAQ({
+              company_id: companyId,
               company_content_id: savedCompanyContent._id,
               question,
               answer,
