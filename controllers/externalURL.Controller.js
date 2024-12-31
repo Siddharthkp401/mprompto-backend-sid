@@ -56,6 +56,7 @@ exports.addExternalURL = async (req, res) => {
       const savedCompanyContent = await newCompanyContent.save();
 
       const newExternalURL = new ExternalURL({
+        company_id: companyId,
         company_content_id: savedCompanyContent._id,
         title: title || "",
         content_url,
@@ -107,6 +108,7 @@ exports.addExternalURL = async (req, res) => {
           const savedCompanyContent = await newCompanyContent.save();
 
           const newExternalURL = new ExternalURL({
+            company_id: companyId,
             company_content_id: savedCompanyContent._id,
             title: title || "",
             content_url: url,
@@ -145,6 +147,7 @@ exports.addExternalURL = async (req, res) => {
           const savedCompanyContent = await newCompanyContent.save();
 
           const newExternalURL = new ExternalURL({
+            company_id: companyId,
             company_content_id: savedCompanyContent._id,
             title: title || "",
             content_url: url,

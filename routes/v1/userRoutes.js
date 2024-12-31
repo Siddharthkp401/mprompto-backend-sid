@@ -22,6 +22,11 @@ const { getTotalCounts } = require("../../controllers/count.controller");
 
 const upload = require("../../utils/multerConfig");
 const { logoutUser } = require("../../controllers/logout.controller");
+const { getCompanyList } = require("../../controllers/getCompanyList.controller");
+
+const { getCompanyContent } = require("../../controllers/getCompanyContent.controller");
+
+
 
 // Public routes
 router.post("/check-mail", registerController.registerUser);
@@ -75,5 +80,11 @@ router.get("/get-customizations", authenticateToken, getCustomizationData);
 router.get("/total-counts", authenticateToken, getTotalCounts);
 
 router.post("/logout", authenticateToken, logoutUser);
+
+router.get("/company-list", getCompanyList);
+
+router.post("/get-company-content", getCompanyContent);
+
+
 
 module.exports = router;

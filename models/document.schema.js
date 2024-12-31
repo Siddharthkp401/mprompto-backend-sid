@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const documentSchema = new Schema({
+  company_id: {
+    type: Schema.Types.ObjectId,
+    ref: "Company",
+    required: true, 
+  },
   company_content_id: {
     type: Schema.Types.ObjectId,
     ref: "CompanyContent",

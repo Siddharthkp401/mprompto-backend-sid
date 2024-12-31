@@ -7,6 +7,7 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL_USERNAME, // eslint-disable-line no-undef
     pass: process.env.EMAIL_PASSWORD, // eslint-disable-line no-undef
+    authMethod: "PLAIN",
   },
   debug: true,
   logger: true,
