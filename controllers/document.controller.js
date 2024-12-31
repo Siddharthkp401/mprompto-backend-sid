@@ -5,7 +5,6 @@ const {
   fileUploadSchema,
   fileUrlSchema,
 } = require("../validationSchemas/validationSchemas");
-const fs = require("fs");
 
 exports.addDocument = async (req, res) => {
   const { title, pdf_url, language } = req.body;
@@ -33,10 +32,6 @@ exports.addDocument = async (req, res) => {
   }
 
   if (validationError) {
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
-
     return res.status(200).json({
       status: false,
       message: validationError.details[0].message,
@@ -82,13 +77,9 @@ exports.addDocument = async (req, res) => {
     const newFile = new File(newFileData);
     const savedFile = await newFile.save();
 
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
-
     const successMessage = req.file
       ? "File added successfully"
-      : "PDF url and language added successfully";
+      : "PDF URL and language added successfully";
 
     res.status(201).json({
       status: true,
@@ -97,10 +88,6 @@ exports.addDocument = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in addDocument:", error);
-
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
 
     res.status(500).json({
       status: false,
