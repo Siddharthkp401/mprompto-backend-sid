@@ -16,15 +16,57 @@ exports.getCompanyContent = async (req, res) => {
 
     try {
         const companyDb = await getCompanyDatabase(company_id);
-        console.log('companyDb :', companyDb);
+        console.log('companyDb:', companyDb);
 
         const FAQ = companyDb.model("FAQ", faqSchema);
         const ExternalURL = companyDb.model("ExternalURL", externalUrlSchema);
         const File = companyDb.model("Document", documentSchema);
+        const CompanyContent = companyDb.model("CompanyContent", CompanyContentSchema);
 
-        const faqs = await FAQ.find({ company_id: company_id, is_deleted: false }, '_id question answer');
-        const externalUrls = await ExternalURL.find({ company_id: company_id, is_deleted: false }, '_id title content_url');
-        const files = await File.find({ company_id: company_id, is_deleted: false }, '_id filename filepath language');
+        const companyContents = await CompanyContent.find({ company_id });
+        if (!companyContents || companyContents.length === 0) {
+            return res.status(404).json({
+                status: false,
+                message: "No content found for the provided company ID",
+            });
+        }
+        const company_content_ids = companyContents.map(content => content._id);
+
+        const faqs = await FAQ.aggregate([
+            {
+                $match: {
+                    company_content_id: { $in: company_content_ids },
+                    is_deleted: false,
+                },
+            },
+            {
+                $project: { _id: 1, question: 1, answer: 1 },
+            },
+        ]);
+
+        const externalUrls = await ExternalURL.aggregate([
+            {
+                $match: {
+                    company_content_id: { $in: company_content_ids },
+                    is_deleted: false,
+                },
+            },
+            {
+                $project: { _id: 1, title: 1, content_url: 1 },
+            },
+        ]);
+
+        const files = await File.aggregate([
+            {
+                $match: {
+                    company_content_id: { $in: company_content_ids },
+                    is_deleted: false,
+                },
+            },
+            {
+                $project: { _id: 1, filename: 1, filepath: 1, language: 1 },
+            },
+        ]);
 
         return res.status(200).json({
             status: true,

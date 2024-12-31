@@ -54,7 +54,7 @@ exports.addDocument = async (req, res) => {
     );
 
     const newCompanyContent = new CompanyContent({
-      company_id: companyId, 
+      company_id: companyId,
       content_type: "Documents",
       language: language || "English",
       content_audience: 0,
@@ -66,7 +66,6 @@ exports.addDocument = async (req, res) => {
     const savedCompanyContent = await newCompanyContent.save();
 
     const newFileData = {
-      company_id: companyId,
       company_content_id: savedCompanyContent._id,
       filename: req.file ? req.file.filename : "",
       filepath: req.file ? req.file.path : "",
