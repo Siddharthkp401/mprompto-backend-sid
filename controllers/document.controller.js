@@ -1,3 +1,4 @@
+const path = require("path");
 const { getCompanyDatabase } = require("../utils/dbUtil");
 const documentSchema = require("../models/document.schema");
 const CompanyContentSchema = require("../models/companyContent.schema");
@@ -60,10 +61,12 @@ exports.addDocument = async (req, res) => {
 
     const savedCompanyContent = await newCompanyContent.save();
 
+    const relativeFilePath = req.file ? path.join("uploads", req.file.filename) : "";
+
     const newFileData = {
       company_content_id: savedCompanyContent._id,
       filename: req.file ? req.file.filename : "",
-      filepath: req.file ? req.file.path : "",
+      filepath: relativeFilePath,
       filesize: req.file ? req.file.size : 0,
       pdf_url: pdf_url || "",
       language: language || "English",
