@@ -1,6 +1,6 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
 const externalUrlSchema = require("../models/externalURL.schema");
-const companyContentSchema = require("../models/companyContent.schema"); // Adjusted case
+const companyContentSchema = require("../models/companyContent.schema");
 const fs = require("fs");
 const XLSX = require("xlsx");
 const path = require("path");
