@@ -34,7 +34,8 @@ const demoClientSchema = new Schema({
         type: String,
         enum: ["Initiated", "Active", "Expired"],
         default: "Initiated",
-      },
+    },
+    language: { type: String, default: "English" },
 }, { timestamps: true });
 
 module.exports = mongoose.model("DemoClient", demoClientSchema, "demo_clients");
