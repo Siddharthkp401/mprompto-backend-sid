@@ -4,7 +4,7 @@ const moment = require("moment");
 const registerDemoClientSchema = Joi.object({
   id: Joi.string().hex().length(24).optional(),
   name: Joi.string()
-    .pattern(/^(?=.*\d)[a-zA-Z0-9 ]+$/)
+    .alphanum()
     .min(1)
     .max(50)
     .required()
@@ -12,7 +12,6 @@ const registerDemoClientSchema = Joi.object({
       "string.base": `"name" must be a string.`,
       "string.empty": `"name" is required.`,
       "string.max": `"name" must be less than or equal to 50 characters.`,
-      "string.pattern.base": `"name" must contain letters, numbers, spaces, and at least one number.`,
     }),
   ttl: Joi.string()
     .custom((value, helper) => {

@@ -22,7 +22,7 @@ exports.getClients = async (req, res) => {
         // Search by name, email_ids, or title
         if (search) {
             query.$or = [
-                { name: { $regex: search, $options: "i" } }, 
+                { name: { $regex: search, $options: "i" } },
                 { email_ids: { $regex: search, $options: "i" } },
                 { title: { $regex: search, $options: "i" } }
             ];

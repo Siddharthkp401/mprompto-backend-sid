@@ -22,8 +22,6 @@ exports.addExternalURL = async (req, res) => {
 
   try {
     const companyId = user.company_id;
-    // console.log(companyId, "companyId");
-
     const companyDb = await getCompanyDatabase(companyId);
     const ExternalURL = companyDb.model("ExternalURL", externalUrlSchema);
     const CompanyContent = companyDb.model(

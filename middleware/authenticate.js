@@ -35,10 +35,8 @@ const authenticateToken = (req, res, next) => {
       }
 
       req.user = user;
-      // console.log("Authenticated user:", user); // Log the authenticated user
       next();
     } catch (error) {
-      // console.error("Error finding user:", error); // Log the error
       res.status(500).json({
         status: false,
         message: "Internal server error",
