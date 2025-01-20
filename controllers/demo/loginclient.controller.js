@@ -1,6 +1,6 @@
 const DemoClient = require("../../models/demo/client.schema");
 const OTP = require("../../models/demo/otp.schema");
-const { sendMail } = require("../../utils/templates/demo/demo_email");
+const { sendMail } = require("../../utils/demo/demo_email");
 
 exports.clientLogin = async (req, res) => {
     try {
@@ -29,7 +29,7 @@ exports.clientLogin = async (req, res) => {
         const otp = Math.floor(1000 + Math.random() * 9000).toString();
 
         const otpDoc = new OTP({
-            name: name, 
+            name: name,
             email: email,
             otp: otp,
             expiresAt: Date.now() + 5 * 60 * 1000, // OTP expires in 5 minutes

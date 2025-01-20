@@ -8,6 +8,18 @@ const registerDemoClientSchema = Joi.object({
     .min(1)
     .max(50)
     .required()
+    .custom((value, helpers) => {
+      if (/\s/.test(value)) {
+        return helpers.message('"name" must only contain alpha-numeric characters (spaces are not allowed).');
+      }
+      if (!/[a-zA-Z]/.test(value)) {
+        return helpers.message('"name" must only contain alpha-numeric characters and must include at least one letter.');
+      }
+      if (!/[0-9]/.test(value)) {
+        return helpers.message('"name" must only contain alpha-numeric characters and must include at least one number.');
+      }
+      return value;
+    })
     .messages({
       "string.base": `"name" must be a string.`,
       "string.empty": `"name" is required.`,

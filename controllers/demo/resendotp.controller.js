@@ -1,5 +1,5 @@
 const OTP = require("../../models/demo/otp.schema");
-const { sendMail } = require("../../utils/templates/demo/demo_email");
+const { sendMail } = require("../../utils/demo/demo_email");
 
 exports.resendOtp = async (req, res) => {
     try {
