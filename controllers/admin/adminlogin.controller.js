@@ -1,5 +1,7 @@
 const Admin = require("../../models/admin/admin.schema");
 const bcrypt = require("bcrypt");
+const { generateAdminAccessToken } = require("../../config/jwt");
+const AdminToken = require("../../models/admin/admintoken.schema");
 
 exports.loginAdmin = async (req, res) => {
     try {
@@ -23,14 +25,30 @@ exports.loginAdmin = async (req, res) => {
             return res.status(401).json({ message: "Invalid credentials." });
         }
 
+        const token = generateAdminAccessToken(admin);
+
+        const existingAdminToken = await AdminToken.findOne({ adminId: admin._id });
+
+        if (existingAdminToken) {
+            existingAdminToken.token = token;
+            await existingAdminToken.save();
+        } else {
+            const adminToken = new AdminToken({
+                adminId: admin._id,
+                token,
+            });
+            await adminToken.save();
+        }
+
         res.status(200).json({
             status: true,
-            message: "Admin login successfully.",
+            message: "Admin login successful.",
             data: {
                 id: admin._id,
                 name: admin.name,
                 email: admin.email,
             },
+            token, 
         });
     } catch (error) {
         console.error("Error logging in admin:", error);
