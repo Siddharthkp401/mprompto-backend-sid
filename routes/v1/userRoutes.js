@@ -35,52 +35,54 @@ router.post("/verify-otp", verifyOtpController.verifyOTP);
 // Protected routes
 router.put(
   "/save-basic-information",
-  authenticateToken,
+  authenticateToken("user"),
   userController.updateUserAndCreateCompany
 );
 
 router.get(
   "/view-profile",
-  authenticateToken,
+  authenticateToken("user"),
   viewProfileController.viewProfile
 );
 
 router.put(
   "/update-profile",
-  authenticateToken,
+  authenticateToken("user"),
   upload.single("profilePicture"),
   updateProfileController.updateProfile
 );
 
 router.post(
   "/add-external-url",
-  authenticateToken,
+  authenticateToken("user"),
   upload.single("file"),
   addExternalURL
 );
 router.post(
   "/add-document",
-  authenticateToken,
+  authenticateToken("user"),
   upload.single("file"),
   addDocument
 );
-router.post("/add-faq", authenticateToken, upload.single("file"), addFAQ);
+router.post("/add-faq", authenticateToken("user"), upload.single("file"), addFAQ);
 
-router.get("/content-listing", authenticateToken, listCompanyContent);
+router.get("/content-listing", authenticateToken("user"), listCompanyContent);
 
 router.post(
   "/customize-data-add",
-  authenticateToken,
+  authenticateToken("user"),
   upload.single("logo"),
   addCustomizationData
 );
 
-router.get("/get-customizations", authenticateToken, getCustomizationData);
+router.get("/get-customizations", authenticateToken("user"), getCustomizationData);
 
-router.get("/total-counts", authenticateToken, getTotalCounts);
+router.get("/total-counts", authenticateToken("user"), getTotalCounts);
 
-router.post("/logout", authenticateToken, logoutUser);
+router.post("/logout", authenticateToken("user"), logoutUser);
 
+
+//COMPANY
 router.get("/company-list", getCompanyList);
 
 router.post("/get-company-content", getCompanyContent);

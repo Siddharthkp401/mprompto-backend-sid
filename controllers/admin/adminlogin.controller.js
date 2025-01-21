@@ -25,19 +25,19 @@ exports.loginAdmin = async (req, res) => {
             return res.status(401).json({ message: "Invalid credentials." });
         }
 
-        const token = generateAdminAccessToken(admin);
+        let adminToken = await AdminToken.findOne({ adminId: admin._id });
 
-        const existingAdminToken = await AdminToken.findOne({ adminId: admin._id });
+        let token;
+        if (!adminToken) {
+            token = generateAdminAccessToken(admin);
 
-        if (existingAdminToken) {
-            existingAdminToken.token = token;
-            await existingAdminToken.save();
-        } else {
-            const adminToken = new AdminToken({
+            adminToken = new AdminToken({
                 adminId: admin._id,
                 token,
             });
             await adminToken.save();
+        } else {
+            token = adminToken.token;
         }
 
         res.status(200).json({
@@ -48,7 +48,7 @@ exports.loginAdmin = async (req, res) => {
                 name: admin.name,
                 email: admin.email,
             },
-            token, 
+            token,
         });
     } catch (error) {
         console.error("Error logging in admin:", error);
