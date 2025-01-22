@@ -15,15 +15,7 @@ exports.createOrUpdate = async (req, res) => {
     const { id, name, ttl, email_ids, url, title, status } = value;
 
     if (id) {
-      const existingClientByName = await DemoClient.findOne({ name });
-      if (existingClientByName && existingClientByName._id.toString() !== id) {
-        return res.status(400).json({
-          status: false,
-          message: "A client with this name already exists.",
-          data: null,
-        });
-      }
-
+      // Update logic for existing client
       const updatedClient = await DemoClient.findByIdAndUpdate(
         id,
         { name, ttl, email_ids, url, title, status },
@@ -44,16 +36,7 @@ exports.createOrUpdate = async (req, res) => {
         data: updatedClient,
       });
     } else {
-      // If no `id` is provided, create a new client
-      const existingClientByName = await DemoClient.findOne({ name });
-      if (existingClientByName) {
-        return res.status(400).json({
-          status: false,
-          message: "A client with this name already exists.",
-          data: null,
-        });
-      }
-
+      // Create logic for a new client
       const newClient = new DemoClient({
         name,
         ttl,

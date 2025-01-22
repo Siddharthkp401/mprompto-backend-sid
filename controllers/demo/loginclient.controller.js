@@ -4,38 +4,45 @@ const { sendMail } = require("../../utils/demo/demo_email");
 
 exports.clientLogin = async (req, res) => {
     try {
-        const { name, email } = req.body;
+        const { email } = req.body;
 
-        if (!name || !email) {
-            return res.status(400).json({ message: "Name and email are required" });
+        if (!email) {
+            return res.status(400).json({ message: "Email is required" });
         }
 
-        const client = await DemoClient.findOne({ name, email_ids: email });
+        const client = await DemoClient.findOne({ email_ids: email });
 
         if (!client) {
             return res.status(404).json({ message: "Client not found" });
         }
 
-        // Check if the status is 'Active'
         if (client.status !== 'Active') {
-            return res.status(404).json({ message: "Status is not active" });
+            return res.status(403).json({ message: "Client is not active" });
         }
 
-        // Check if the data array exists and is not empty
         if (!Array.isArray(client.data) || client.data.length === 0) {
             return res.status(404).json({ message: "Product details not found" });
         }
 
         const otp = Math.floor(1000 + Math.random() * 9000).toString();
 
-        const otpDoc = new OTP({
-            name: name,
-            email: email,
-            otp: otp,
-            expiresAt: Date.now() + 5 * 60 * 1000, // OTP expires in 5 minutes
-        });
+        let otpDoc = await OTP.findOne({ email });
 
-        await otpDoc.save();
+        if (otpDoc) {
+            otpDoc.otp = otp;
+            otpDoc.expiresAt = Date.now() + 5 * 60 * 1000; // OTP expires in 5 minutes
+            otpDoc.isVerified = false; // Reset verification status
+            await otpDoc.save();
+        } else {
+            otpDoc = new OTP({
+                name: client.name, 
+                email: email,
+                otp: otp,
+                expiresAt: Date.now() + 5 * 60 * 1000,
+                isVerified: false,
+            });
+            await otpDoc.save();
+        }
 
         try {
             await sendMail(email, "Your OTP Code", otp);

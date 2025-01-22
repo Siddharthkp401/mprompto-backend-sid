@@ -3,16 +3,16 @@ const DemoClient = require("../../models/demo/client.schema");
 
 exports.verifyOtp = async (req, res) => {
     try {
-        const { name, email, otp } = req.body;
+        const { email, otp } = req.body;
 
-        if (!name || !email || !otp) {
-            return res.status(400).json({ message: "Name, email, and OTP are required" });
+        if (!email || !otp) {
+            return res.status(400).json({ message: "Email and OTP are required" });
         }
 
-        const otpDoc = await OTP.findOne({ name, email, otp });
+        const otpDoc = await OTP.findOne({ email, otp });
 
         if (!otpDoc) {
-            return res.status(404).json({ message: "Invalid name, email, or OTP" });
+            return res.status(404).json({ message: "Invalid email or OTP" });
         }
 
         if (otpDoc.expiresAt < Date.now()) {
@@ -22,13 +22,13 @@ exports.verifyOtp = async (req, res) => {
         otpDoc.isVerified = true;
         await otpDoc.save();
 
-        const clientData = await DemoClient.findOne({
-            name,
-            email_ids: email,
+        const clientData = await DemoClient.find({
+            email_ids: { $in: [email] },
+            status: "Active", 
         });
 
-        if (!clientData) {
-            return res.status(404).json({ message: "No client data found for the provided name and email" });
+        if (!clientData || clientData.length === 0) {
+            return res.status(404).json({ message: "No active client data found for the provided email" });
         }
 
         return res.status(200).json({

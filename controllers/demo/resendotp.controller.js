@@ -3,20 +3,20 @@ const { sendMail } = require("../../utils/demo/demo_email");
 
 exports.resendOtp = async (req, res) => {
     try {
-        const { name, email } = req.body;
+        const { email } = req.body;
 
-        if (!name || !email) {
-            return res.status(400).json({ message: "Name and email are required" });
+        if (!email) {
+            return res.status(400).json({ message: "Email is required" });
         }
 
-        let otpDoc = await OTP.findOne({ name, email });
+        let otpDoc = await OTP.findOne({ email });
 
         if (!otpDoc) {
-            return res.status(404).json({ message: "Name and email do not match any existing records" });
+            return res.status(404).json({ message: "Email does not match any existing records" });
         }
 
         otpDoc.otp = Math.floor(1000 + Math.random() * 9000).toString();
-        otpDoc.expiresAt = Date.now() + 5 * 60 * 1000;
+        otpDoc.expiresAt = Date.now() + 5 * 60 * 1000; // OTP expires in 5 minutes
         otpDoc.isVerified = false;
 
         await otpDoc.save();
