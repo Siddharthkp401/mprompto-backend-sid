@@ -1,6 +1,6 @@
 const { getCompanyDatabase } = require("../utils/dbUtil");
 const externalUrlSchema = require("../models/externalURL.schema");
-const companyContentSchema = require("../models/companyContent.schema"); // Adjusted case
+const companyContentSchema = require("../models/companyContent.schema");
 const fs = require("fs");
 const XLSX = require("xlsx");
 const path = require("path");
@@ -22,8 +22,6 @@ exports.addExternalURL = async (req, res) => {
 
   try {
     const companyId = user.company_id;
-    // console.log(companyId, "companyId");
-
     const companyDb = await getCompanyDatabase(companyId);
     const ExternalURL = companyDb.model("ExternalURL", externalUrlSchema);
     const CompanyContent = companyDb.model(

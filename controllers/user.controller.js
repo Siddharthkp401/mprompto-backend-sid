@@ -5,7 +5,6 @@ const Company = require("../models/company.schema");
 const { createCompanyDatabase } = require("../utils/createCompanyDatabase");
 
 exports.updateUserAndCreateCompany = async (req, res) => {
-  // console.log(req.user, "user from token");
   const {
     name,
     country_code,
@@ -18,7 +17,6 @@ exports.updateUserAndCreateCompany = async (req, res) => {
 
   try {
     const user = req.user;
-    // console.log(user, "user from DB");
 
     const { error } = updateUserAndCreateCompanySchema.validate(req.body, {
       abortEarly: false,
@@ -36,7 +34,6 @@ exports.updateUserAndCreateCompany = async (req, res) => {
     user.country_code = country_code;
     user.mobile_number = mobile_number;
     await user.save();
-    // console.log(user, "updated user");
 
     const { dbName } = await createCompanyDatabase(company_name);
 
@@ -55,7 +52,6 @@ exports.updateUserAndCreateCompany = async (req, res) => {
 
     user.company_id = savedCompany._id;
     await user.save();
-    // console.log(user, "user with company_id");
 
     res.status(200).json({
       status: true,

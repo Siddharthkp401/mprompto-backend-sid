@@ -1,51 +1,65 @@
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../config/jwt");
+const { JWT_SECRET, ADMIN_JWT_SECRET } = require("../config/jwt");
 const User = require("../models/user.schema");
+const Admin = require("../models/admin/admin.schema");
 
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  const unauthorizedResponse = (res, message) => {
-    res.status(401).json({
-      status: false,
-      message: message || "Unauthorized",
-      data: null,
-    });
+const authenticateToken = (type = "user") => {
+  const secrets = {
+    user: JWT_SECRET,
+    admin: ADMIN_JWT_SECRET,
   };
 
-  if (!token) {
-    return unauthorizedResponse(res, "No token provided");
-  }
+  const models = {
+    user: User,
+    admin: Admin,
+  };
 
-  jwt.verify(token, JWT_SECRET, async (err, decoded) => {
-    if (err) {
-      console.error("Error verifying token:", err);
-      return res.status(403).json({
+  return async (req, res, next) => {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    const unauthorizedResponse = (res, message) => {
+      res.status(401).json({
         status: false,
-        message: "Invalid token",
+        message: message || "Unauthorized",
         data: null,
       });
+    };
+
+    if (!token) {
+      return unauthorizedResponse(res, "No token provided");
     }
 
-    try {
-      const user = await User.findById(decoded.id);
-      if (!user) {
-        return unauthorizedResponse(res, "User not found");
+    const secretKey = secrets[type];
+    const Model = models[type];
+
+    jwt.verify(token, secretKey, async (err, decoded) => {
+      if (err) {
+        console.error(`Error verifying ${type} token:`, err);
+        return res.status(403).json({
+          status: false,
+          message: "Invalid token",
+          data: null,
+        });
       }
 
-      req.user = user;
-      // console.log("Authenticated user:", user); // Log the authenticated user
-      next();
-    } catch (error) {
-      // console.error("Error finding user:", error); // Log the error
-      res.status(500).json({
-        status: false,
-        message: "Internal server error",
-        data: null,
-      });
-    }
-  });
+      try {
+        const entity = await Model.findById(decoded.id);
+        if (!entity) {
+          return unauthorizedResponse(res, `${type.charAt(0).toUpperCase() + type.slice(1)} not found`);
+        }
+
+        req[type] = entity; // Attach user/admin object to the request
+        next();
+      } catch (error) {
+        res.status(500).json({
+          status: false,
+          message: "Internal server error",
+          data: null,
+        });
+      }
+    });
+  };
 };
 
 module.exports = { authenticateToken };

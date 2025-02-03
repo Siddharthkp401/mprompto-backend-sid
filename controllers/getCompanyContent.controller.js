@@ -16,8 +16,6 @@ exports.getCompanyContent = async (req, res) => {
 
     try {
         const companyDb = await getCompanyDatabase(company_id);
-        console.log('companyDb:', companyDb);
-
         const FAQ = companyDb.model("FAQ", faqSchema);
         const ExternalURL = companyDb.model("ExternalURL", externalUrlSchema);
         const File = companyDb.model("Document", documentSchema);
