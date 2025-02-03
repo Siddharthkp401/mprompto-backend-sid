@@ -6,8 +6,8 @@ const demoClientSchema = new Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
+      unique: false
     },
     ttl: {
       type: Date,
@@ -43,14 +43,18 @@ const demoClientSchema = new Schema(
     data: {
       type: [
         {
-          question: { type: String, default: "" }, 
-          answers: { type: String, default: "" }, 
+          question: { type: String, default: "" },
+          answers: { type: String, default: "" },
         },
       ],
-      default: [], 
+      default: [],
+    },
+    screenshotPath: {
+      type: String,
+      default: null, // Store the path of the screenshot here
     },
   },
-  { timestamps: true } 
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("DemoClient", demoClientSchema, "demo_clients");

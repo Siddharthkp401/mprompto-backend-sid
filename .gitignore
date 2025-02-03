@@ -78,3 +78,6 @@ out/
 
 # SvelteKit build / output
 .svelte-kit/
+
+# Remove public demo images file to push 
+./public

@@ -1,5 +1,6 @@
 const DemoClient = require("../../models/demo/client.schema");
 const { registerDemoClientSchema } = require("../../validationSchemas/demo/clientValidationSchemas");
+const { captureScreenshot } = require("./screenshotHelper");
 
 exports.createOrUpdate = async (req, res) => {
   try {
@@ -14,11 +15,16 @@ exports.createOrUpdate = async (req, res) => {
 
     const { id, name, ttl, email_ids, url, title, status } = value;
 
+    let screenshotPath = null;
+    if (url) {
+      screenshotPath = await captureScreenshot(url); // Capture screenshot
+    }
+
     if (id) {
-      // Update logic for existing client
+      // Update existing client
       const updatedClient = await DemoClient.findByIdAndUpdate(
         id,
-        { name, ttl, email_ids, url, title, status },
+        { name, ttl, email_ids, url, title, status, screenshotPath },
         { new: true }
       );
 
@@ -36,7 +42,7 @@ exports.createOrUpdate = async (req, res) => {
         data: updatedClient,
       });
     } else {
-      // Create logic for a new client
+      // Create a new client
       const newClient = new DemoClient({
         name,
         ttl,
@@ -44,6 +50,7 @@ exports.createOrUpdate = async (req, res) => {
         url,
         title,
         status: status || "Initiated",
+        screenshotPath,
       });
 
       await newClient.save();

@@ -35,7 +35,7 @@ exports.clientLogin = async (req, res) => {
             await otpDoc.save();
         } else {
             otpDoc = new OTP({
-                name: client.name, 
+                // name: client.name, 
                 email: email,
                 otp: otp,
                 expiresAt: Date.now() + 5 * 60 * 1000,
