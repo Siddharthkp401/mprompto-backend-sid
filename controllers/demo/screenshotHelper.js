@@ -12,7 +12,7 @@ const captureScreenshot = async (url) => {
     const browser = await puppeteer.launch({
       headless: "new",
       defaultViewport: { width: webWidth, height: webHeight },
-      executablePath:'/snap/bin/chromium',
+      executablePath: '/snap/bin/chromium',
       args: ["--disable-gpu", "--no-sandbox", "--disable-setuid-sandbox"],
     });
 
@@ -31,7 +31,7 @@ const captureScreenshot = async (url) => {
     await page.screenshot({ path: imagePath });
 
     await browser.close();
-    return `/assets/images/${screenshotName}`; // Returning relative path for database storage
+    return `/public/demo/product-images/${screenshotName}`; // Returning relative path for database storage
   } catch (error) {
     console.error("Screenshot capture failed:", error);
     return null;

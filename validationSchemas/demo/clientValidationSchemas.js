@@ -4,7 +4,7 @@ const moment = require("moment");
 const registerDemoClientSchema = Joi.object({
   id: Joi.string().hex().length(24).optional(),
   name: Joi.string()
-    .alphanum()
+    .pattern(/^[a-zA-Z0-9\s]+$/)
     .min(1)
     .max(50)
     .required()
