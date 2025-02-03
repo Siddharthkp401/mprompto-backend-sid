@@ -19,8 +19,6 @@ const createCompanyDatabase = async (companyName) => {
       .replace(/\s+/g, "_")}`;
     const dbUri = `mongodb://localhost:27017/${dbName}`;
 
-    // console.log(dbUri, "dbUri");
-
     // Create or reuse the connection
     const companyDb = mongoose.createConnection(
       dbUri,

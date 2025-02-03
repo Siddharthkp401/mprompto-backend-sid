@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
         authMethod: "PLAIN",
     },
     debug: true,
-    logger: true,
+    logger: false,
 });
 
 const sendMail = async (to, subject, otp) => {

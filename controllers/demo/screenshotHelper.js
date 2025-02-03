@@ -20,7 +20,6 @@ const captureScreenshot = async (url) => {
 
     // Ensure the directory exists
     const dirPath = path.join(__dirname, "..", "..", "public", "demo", "product-images");
-    console.log('dirPath :', dirPath);
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
     }
