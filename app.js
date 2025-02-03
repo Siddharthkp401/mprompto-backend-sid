@@ -1,3 +1,5 @@
+const https = require('https');
+const fs = require('fs');
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -7,6 +9,14 @@ const connectDB = require("./config/db");
 const userRoutes = require("./routes/v1/userRoutes");
 const demoRoutes = require("./routes/v1/demoRoutes");
 require("dotenv").config();
+
+const privateKey = fs.readFileSync('/var/www/ssl/playground.mprompto.com/playground.mprompto.com.key');
+const certificate = fs.readFileSync('/var/www/ssl/playground.mprompto.com/ssl-bundle.crt');
+
+const credentials = {
+  key: privateKey,
+  cert: certificate,
+};
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +33,8 @@ connectDB();
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/demo", demoRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+//app.listen(PORT, () => {
+//  console.log(`Server is running on port ${PORT}`);
+//});
+const httpsServer = https.createServer(credentials, app);
+httpsServer.listen(PORT);
