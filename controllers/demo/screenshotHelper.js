@@ -12,6 +12,7 @@ const captureScreenshot = async (url) => {
     const browser = await puppeteer.launch({
       headless: "new",
       defaultViewport: { width: webWidth, height: webHeight },
+      executablePath:'/snap/bin/chromium',
       args: ["--disable-gpu", "--no-sandbox", "--disable-setuid-sandbox"],
     });
 
