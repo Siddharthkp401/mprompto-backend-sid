@@ -10,14 +10,17 @@ exports.clientLogin = async (req, res) => {
             return res.status(400).json({ message: "Email is required" });
         }
 
-        const client = await DemoClient.findOne({ email_ids: email });
+        const client = await DemoClient.findOne({ 
+            email_ids: { $in: [email] },
+            status: "Active",
+        });
 
         if (!client) {
-            return res.status(404).json({ message: "Client not found" });
+            return res.status(404).json({ message: "Data not found" });
         }
 
         if (client.status !== 'Active') {
-            return res.status(403).json({ message: "Client is not active" });
+            return res.status(403).json({ message: "Data is not active" });
         }
 
         if (client.data== "" || client.data==null) {
