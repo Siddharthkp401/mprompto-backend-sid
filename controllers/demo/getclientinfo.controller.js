@@ -3,14 +3,14 @@ const DemoClient = require("../../models/demo/client.schema");
 
 exports.getClients = async (req, res) => {
     try {
-        const { page = 1, limit = 10, status = "ALL", language = "English", search = "" } = req.query;
+        const { page = 1, limit = 10, status = "", language = "English", search = "" } = req.query;
 
         const skip = (page - 1) * limit;
 
         const query = {};
 
         // Filter by status if not "ALL"
-        if (status !== "ALL") {
+        if (status !== "") {
             query.status = status;
         }
 
