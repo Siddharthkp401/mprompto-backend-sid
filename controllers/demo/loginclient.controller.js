@@ -20,7 +20,7 @@ exports.clientLogin = async (req, res) => {
             return res.status(403).json({ message: "Client is not active" });
         }
 
-        if (!Array.isArray(client.data) || client.data.length === 0) {
+        if (client.data!= null) {
             return res.status(404).json({ message: "Product details not found" });
         }
 
