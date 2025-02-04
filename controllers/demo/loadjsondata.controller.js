@@ -5,9 +5,9 @@ exports.addQuestionsData = async (req, res) => {
     try {
         const { id, data } = req.body;
 
-        if (!id || !Array.isArray(data) || data.length === 0) {
-            return res.status(400).json({ message: "Invalid request data" });
-        }
+        // if (!id || !Array.isArray(data) || data.length === 0) {
+        //     return res.status(400).json({ message: "Invalid request data" });
+        // }
 
         // Check if the ID is a valid ObjectId
         if (!mongoose.Types.ObjectId.isValid(id)) {
