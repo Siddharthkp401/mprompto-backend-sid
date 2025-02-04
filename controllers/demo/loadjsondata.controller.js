@@ -21,7 +21,7 @@ exports.addQuestionsData = async (req, res) => {
             return res.status(404).json({ message: "ID not found." });
         }
 
-        client.data = [...client.data, ...data];
+        client.data = data;
         await client.save();
 
         res.status(200).json({
