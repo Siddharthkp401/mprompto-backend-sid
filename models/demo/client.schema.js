@@ -41,13 +41,8 @@ const demoClientSchema = new Schema(
       default: "English",
     },
     data: {
-      type: [
-        {
-          question: { type: String, default: "" },
-          answers: { type: String, default: "" },
-        },
-      ],
-      default: [],
+      type: Object,
+      default: {},
     },
     screenshotPath: {
       type: String,
