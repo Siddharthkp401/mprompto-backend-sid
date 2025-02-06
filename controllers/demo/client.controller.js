@@ -29,9 +29,9 @@ exports.createOrUpdate = async (req, res) => {
       );
 
       if (!updatedClient) {
-        return res.status(404).json({
+        return res.status(204).json({
           status: false,
-          message: "Client not found.",
+          message: "There is no content to send for this request.",
           data: null,
         });
       }
