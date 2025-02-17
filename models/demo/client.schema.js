@@ -43,10 +43,16 @@ const demoClientSchema = new Schema(
     data: {
       type: Object,
       default: {},
+      required: true,
+    },
+    whyData: {
+      type: Object,
+      default: {},
+      required: true,
     },
     screenshotPath: {
       type: String,
-      default: null, // Store the path of the screenshot here
+      default: null,
     },
   },
   { timestamps: true }
