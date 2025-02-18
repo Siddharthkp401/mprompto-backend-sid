@@ -13,7 +13,7 @@ exports.createOrUpdate = async (req, res) => {
       });
     }
 
-    const { id, name, ttl, email_ids, url, title, status } = value;
+    const { id, name, ttl, email_ids, url, title, status, data_cleaned_status } = value;
 
     let screenshotPath = null;
     if (url) {
@@ -24,7 +24,7 @@ exports.createOrUpdate = async (req, res) => {
       // Update existing client
       const updatedClient = await DemoClient.findByIdAndUpdate(
         id,
-        { name, ttl, email_ids, url, title, status, screenshotPath },
+        { name, ttl, email_ids, url, title, status, data_cleaned_status, screenshotPath },
         { new: true }
       );
 
@@ -50,6 +50,7 @@ exports.createOrUpdate = async (req, res) => {
         url,
         title,
         status: status || "Initiated",
+        data_cleaned_status: data_cleaned_status || "Initiated",
         screenshotPath,
       });
 
