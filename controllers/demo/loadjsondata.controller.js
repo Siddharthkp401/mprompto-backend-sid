@@ -1,17 +1,13 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const DemoClient = require("../../models/demo/client.schema");
 
 exports.addQuestionsData = async (req, res) => {
     try {
-        const { id, data } = req.body;
+        const { id, data, whyData } = req.body;
 
-        // if (!id || !Array.isArray(data) || data.length === 0) {
-        //     return res.status(400).json({ message: "Invalid request data" });
-        // }
-
-        // Check if the ID is a valid ObjectId
+        // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Enter id does not exits" });
+            return res.status(400).json({ message: "Entered ID does not exist" });
         }
 
         // Check if the record exists by ID
@@ -22,6 +18,8 @@ exports.addQuestionsData = async (req, res) => {
         }
 
         client.data = data;
+        client.whyData = whyData;
+
         await client.save();
 
         res.status(200).json({
