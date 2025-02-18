@@ -7,7 +7,7 @@ const demoClientSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      unique: false
+      unique: false,
     },
     ttl: {
       type: Date,
@@ -36,6 +36,11 @@ const demoClientSchema = new Schema(
       enum: ["Initiated", "Active", "Expired"],
       default: "Initiated",
     },
+    data_cleaned_status: {
+      type: String,
+      enum: ["Initiated", "Completed"],
+      default: "Initiated",
+    },
     language: {
       type: String,
       default: "English",
@@ -53,6 +58,14 @@ const demoClientSchema = new Schema(
     screenshotPath: {
       type: String,
       default: null,
+    },
+    primary_text: {
+      type: String,
+      default: "",
+    },
+    secondary_text: {
+      type: String,
+      default: "",
     },
   },
   { timestamps: true }
