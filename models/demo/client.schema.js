@@ -53,7 +53,6 @@ const demoClientSchema = new Schema(
     whyData: {
       type: Object,
       default: {},
-      required: true,
     },
     screenshotPath: {
       type: String,
