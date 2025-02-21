@@ -41,6 +41,11 @@ const demoClientSchema = new Schema(
       enum: ["Initiated", "Completed"],
       default: "Initiated",
     },
+    q_and_a_status: {
+      type: String,
+      enum: ["Initiated", "Processing","Completed"],
+      default: "Initiated",
+    },
     language: {
       type: String,
       default: "English",

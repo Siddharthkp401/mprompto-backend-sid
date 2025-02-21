@@ -16,26 +16,23 @@ exports.generateQAndA = async (req, res) => {
 
         client.primary_text = primary_text || client.primary_text;
         client.secondary_text = secondary_text || client.secondary_text;
+        client.q_and_a_status = "Processing";
         await client.save();
 
         // Call AI API
-        // const aiApiUrl = "https://your-ai-api.com/generate-qna";
-        // const aiApiResponse = await axios.post(aiApiUrl, {
-        //     question_prompt: question_generation_prompt,
-        //     answer_prompt: answer_generation_prompt,
-        // });
+        const aiApiUrl = "http://ec2-13-234-237-52.ap-south-1.compute.amazonaws.com:8000/api/generate";
+        const aiApiResponse = await axios.post(aiApiUrl, {
+            id: id,
+            raw_text: primary_text + ' ' + secondary_text,
+            question_prompt: question_generation_prompt,
+            answer_prompt: answer_generation_prompt,
+        });
 
-
-        // Mock AI API response
-        const mockAiResponse = {
-            question: "What is Node.js?",
-            answer: "Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine.",
-        };
 
         // Respond with AI API response
         return res.status(200).json({
             message: "Q&A generated successfully",
-            aiResponse: mockAiResponse,
+            aiResponse: aiApiResponse.data,
         });
     } catch (error) {
         console.error("Error generating Q&A:", error);

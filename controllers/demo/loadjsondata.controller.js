@@ -18,6 +18,7 @@ exports.addQuestionsData = async (req, res) => {
         }
 
         client.data = data;
+        client.q_and_a_status = "Completed";
         client.whyData = whyData;
 
         await client.save();
