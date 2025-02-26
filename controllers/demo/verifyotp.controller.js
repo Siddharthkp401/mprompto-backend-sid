@@ -25,11 +25,12 @@ exports.verifyOtp = async (req, res) => {
         let clientData = await DemoClient.find({
             email_ids: { $in: [email] },
             status: "Active",
-        });
+        }).lean(); // Convert Mongoose documents to plain objects
 
         if (!clientData || clientData.length === 0) {
             return res.status(404).json({ message: "No active client data found for the provided email" });
         }
+
         clientData = clientData.map(client => {
             if (client.final_data?.qa) {
                 client.data = client.data || {}; // Ensure `client.data` exists
