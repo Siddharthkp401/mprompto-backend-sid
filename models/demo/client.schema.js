@@ -55,6 +55,11 @@ const demoClientSchema = new Schema(
       default: {},
       required: true,
     },
+    final_data: {
+      type: Object,
+      default: {},
+      required: true,
+    },
     whyData: {
       type: Object,
       default: {},

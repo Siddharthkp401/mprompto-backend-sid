@@ -22,14 +22,22 @@ exports.verifyOtp = async (req, res) => {
         otpDoc.isVerified = true;
         await otpDoc.save();
 
-        const clientData = await DemoClient.find({
+        let clientData = await DemoClient.find({
             email_ids: { $in: [email] },
-            status: "Active", 
+            status: "Active",
         });
 
         if (!clientData || clientData.length === 0) {
             return res.status(404).json({ message: "No active client data found for the provided email" });
         }
+        clientData = clientData.map(client => {
+            if (client.final_data?.qa) {
+                client.data = client.data || {}; // Ensure `client.data` exists
+                client.data.qa = client.final_data.qa; // Move `qa` from `final_data` to `data`
+            }
+            delete client.final_data; // Remove `final_data`
+            return client;
+        });
 
         return res.status(200).json({
             message: "OTP verified successfully",
