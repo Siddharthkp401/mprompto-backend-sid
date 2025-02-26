@@ -1,6 +1,5 @@
 const DemoClient = require("../../models/demo/client.schema");
 
-
 exports.getClients = async (req, res) => {
     try {
         const { page = 1, limit = 10, status = "", language = "English", search = "" } = req.query;
@@ -29,10 +28,21 @@ exports.getClients = async (req, res) => {
         }
 
         // Fetch filtered clients with pagination
-        const clients = await DemoClient.find(query)
+        let clients = await DemoClient.find(query)
             .skip(skip)
             .limit(Number(limit))
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean(); 
+
+        clients = clients.map(client => {
+            const finalQa = client.final_data?.qa || []; 
+            delete client.final_data;
+            client.data = client.data || {};
+            const existingQa = client.data.qa || [];
+            client.data.qa = [...existingQa, ...finalQa];
+
+            return client;
+        });
 
         const totalCount = await DemoClient.countDocuments(query);
 
@@ -55,4 +65,3 @@ exports.getClients = async (req, res) => {
         });
     }
 };
-

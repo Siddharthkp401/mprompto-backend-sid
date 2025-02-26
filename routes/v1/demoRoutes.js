@@ -9,6 +9,8 @@ const clientverifyOtp = require("../../controllers/demo/verifyotp.controller")
 const loadCleanedTextData = require("../../controllers/demo/loadCleanedText.controller")
 const generateQAndAdata = require("../../controllers/demo/genrateQuestionsAnswers.controller")
 const generateQAndAdataStatus = require("../../controllers/demo/updateQAStatus.controller")
+const submitFinalQuestionsAnswers = require("../../controllers/demo/submitFinalQA.controller")
+
 
 
 
@@ -27,8 +29,7 @@ router.post("/clients/load-json-data", loadJsonDataController.addQuestionsData);
 router.post("/clients/load-cleaned-text", loadCleanedTextData.loadCleanedText);
 router.post("/clients/generate-q-and-a", generateQAndAdata.generateQAndA);
 router.post("/clients/generate-q-and-a-status", generateQAndAdataStatus.updateQAStatus);
-
-
+router.post("/clients/submit-final-q-and-a", submitFinalQuestionsAnswers.updateFinalData);
 
 
 module.exports = router;
