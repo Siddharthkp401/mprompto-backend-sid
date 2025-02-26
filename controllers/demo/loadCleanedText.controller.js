@@ -12,7 +12,7 @@ exports.loadCleanedText = async (req, res) => {
             });
         }
 
-        const data_cleaned_status = primary_text && primary_text.trim() !== "" ? "Completed" : "Initiated";
+        const data_cleaned_status = primary_text && primary_text.trim() !== "" ? "Completed" : "In-Progress";
 
         const updatedClient = await DemoClient.findByIdAndUpdate(
             id,

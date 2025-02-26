@@ -4,7 +4,7 @@ exports.updateQAStatus = async (req, res) => {
     try {
         const { id, q_and_a_status } = req.body;
 
-        const validStatuses = ["Initiated", "Processing", "Completed", "Failed"];
+        const validStatuses = ["-", "In-Progress","Completed","Error"];
         if (!validStatuses.includes(q_and_a_status)) {
             return res.status(400).json({ message: "Invalid status value" });
         }
