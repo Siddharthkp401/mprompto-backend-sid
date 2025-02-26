@@ -16,7 +16,7 @@ exports.generateQAndA = async (req, res) => {
 
         client.primary_text = primary_text || client.primary_text;
         client.secondary_text = secondary_text || client.secondary_text;
-        client.q_and_a_status = "Processing";
+        client.q_and_a_status = "In-Progress";
         await client.save();
 
         // Call AI API

@@ -49,8 +49,8 @@ exports.createOrUpdate = async (req, res) => {
         email_ids,
         url,
         title,
-        status: status || "Initiated",
-        data_cleaned_status: data_cleaned_status || "Initiated",
+        status: status || "Completed",
+        data_cleaned_status: data_cleaned_status || "In-Progress",
         screenshotPath,
       });
 

@@ -33,18 +33,18 @@ const demoClientSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["Initiated", "Active", "Expired"],
-      default: "Initiated",
+      enum: ["Completed", "Active", "Expired"],
+      default: "Completed",
     },
     data_cleaned_status: {
       type: String,
-      enum: ["Initiated", "Completed"],
-      default: "Initiated",
+      enum: ["In-Progress", "Completed","Error"],
+      default: "In-Progress",
     },
     q_and_a_status: {
       type: String,
-      enum: ["Initiated", "Processing","Completed","Failed"],
-      default: "Initiated",
+      enum: ["-", "In-Progress","Completed","Error"],
+      default: "-",
     },
     language: {
       type: String,
