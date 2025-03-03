@@ -38,12 +38,12 @@ const demoClientSchema = new Schema(
     },
     data_cleaned_status: {
       type: String,
-      enum: ["In-Progress", "Completed","Error"],
+      enum: ["In-Progress", "Completed", "Error"],
       default: "In-Progress",
     },
     q_and_a_status: {
       type: String,
-      enum: ["-", "In-Progress","Completed","Error"],
+      enum: ["-", "In-Progress", "Completed", "Error"],
       default: "-",
     },
     language: {
@@ -61,6 +61,10 @@ const demoClientSchema = new Schema(
       required: true,
     },
     whyData: {
+      type: Object,
+      default: {},
+    },
+    final_why_data: {
       type: Object,
       default: {},
     },

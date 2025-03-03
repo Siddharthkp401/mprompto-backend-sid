@@ -3,9 +3,7 @@ const DemoClient = require("../../models/demo/client.schema");
 exports.getClients = async (req, res) => {
     try {
         const { page = 1, limit = 10, status = "", language = "English", search = "" } = req.query;
-
         const skip = (page - 1) * limit;
-
         const query = {};
 
         // Filter by status if not "ALL"
@@ -27,19 +25,26 @@ exports.getClients = async (req, res) => {
             ];
         }
 
-        // Fetch filtered clients with pagination
         let clients = await DemoClient.find(query)
             .skip(skip)
             .limit(Number(limit))
             .sort({ createdAt: -1 })
-            .lean(); 
+            .lean();
 
         clients = clients.map(client => {
-            const finalQa = client.final_data?.qa || []; 
+            // Append final_data.qa to data.qa
+            const finalQa = client.final_data?.qa || [];
             delete client.final_data;
             client.data = client.data || {};
             const existingQa = client.data.qa || [];
             client.data.qa = [...existingQa, ...finalQa];
+
+            // Append final_why_data.qa to whyData.qa
+            const finalWhyQa = client.final_why_data?.qa || [];
+            delete client.final_why_data;
+            client.whyData = client.whyData || {};
+            const existingWhyQa = client.whyData.qa || [];
+            client.whyData.qa = [...existingWhyQa, ...finalWhyQa];
 
             return client;
         });
