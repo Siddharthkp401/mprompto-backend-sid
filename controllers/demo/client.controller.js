@@ -1,6 +1,8 @@
 const DemoClient = require("../../models/demo/client.schema");
 const { registerDemoClientSchema } = require("../../validationSchemas/demo/clientValidationSchemas");
 const { captureScreenshot } = require("./screenshotHelper");
+const axios = require("axios");
+const aiApiUrls = require("../../config/aiApiUrls");
 
 exports.createOrUpdate = async (req, res) => {
   try {
@@ -34,6 +36,20 @@ exports.createOrUpdate = async (req, res) => {
           message: "There is no content to send for this request.",
           data: null,
         });
+      }
+
+      // After updating, call the scrape API
+      try {
+        const apiUrl = aiApiUrls.scrape_data;
+        await axios.post(apiUrl, {
+          id: updatedClient._id.toString(),
+          url: updatedClient.url,
+          term: updatedClient.title,
+        });
+
+        console.log("Scrape API called successfully.");
+      } catch (scrapeError) {
+        console.error("Error calling scrape API:", scrapeError);
       }
 
       return res.status(200).json({
