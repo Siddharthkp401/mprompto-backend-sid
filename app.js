@@ -11,6 +11,9 @@ const demoRoutes = require("./routes/v1/demoRoutes");
 const adminRoutes = require("./routes/v1/adminRoutes")
 require("dotenv").config();
 
+const cron = require("node-cron");
+const { clientCrone } = require("./controllers/demo/clientCrone.controller");
+
 const privateKey = fs.readFileSync('/var/www/ssl/playground.mprompto.com/playground.mprompto.com.key');
 const certificate = fs.readFileSync('/var/www/ssl/playground.mprompto.com/ssl-bundle.crt');
 
@@ -36,8 +39,13 @@ app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/demo", demoRoutes);
 app.use("/api/v1/admin", adminRoutes)
 
-//app.listen(PORT, () => {
-//  console.log(`Server is running on port ${PORT}`);
-//});
+
+cron.schedule("*/1 * * * *", async () => {
+  await clientCrone();
+});
+
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
 const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(PORT);
