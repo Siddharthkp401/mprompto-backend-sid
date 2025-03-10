@@ -1,5 +1,7 @@
 const DemoClient = require("../../models/demo/client.schema");
 const axios = require("axios");
+const aiApiUrls = require("../../config/aiApiUrls");
+
 
 exports.generateQAndA = async (req, res) => {
     try {
@@ -20,8 +22,8 @@ exports.generateQAndA = async (req, res) => {
         await client.save();
 
         // Call AI API
-        const aiApiUrl = "http://ec2-13-234-237-52.ap-south-1.compute.amazonaws.com:8000/api/generate";
-        const aiApiResponse = await axios.post(aiApiUrl, {
+        const apiUrl = aiApiUrls.generate_q_and_a;
+        const aiApiResponse = await axios.post(apiUrl, {
             id: id,
             raw_text: primary_text + ' ' + secondary_text,
             question_prompt: question_generation_prompt,

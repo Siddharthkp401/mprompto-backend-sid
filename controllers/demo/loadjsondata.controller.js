@@ -22,7 +22,10 @@ exports.addQuestionsData = async (req, res) => {
         }
 
         if (whyData !== undefined) {
-            client.whyData = whyData;
+            client.whyData = {
+                ...client.whyData,
+                ...whyData,
+            };
         }
 
         client.q_and_a_status = "Completed";

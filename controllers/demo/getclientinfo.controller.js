@@ -41,10 +41,18 @@ exports.getClients = async (req, res) => {
 
             // Append final_why_data.qa to whyData.qa
             const finalWhyQa = client.final_why_data?.qa || [];
+            const finalIntelligence = client.final_why_data?.intelligence || [];
             delete client.final_why_data;
+
             client.whyData = client.whyData || {};
+
+            // Merge QA data
             const existingWhyQa = client.whyData.qa || [];
             client.whyData.qa = [...existingWhyQa, ...finalWhyQa];
+
+            // Merge Intelligence data
+            const existingIntelligence = client.whyData.intelligence || [];
+            client.whyData.intelligence = [...existingIntelligence, ...finalIntelligence];
 
             return client;
         });

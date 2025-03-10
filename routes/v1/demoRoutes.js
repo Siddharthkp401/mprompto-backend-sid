@@ -11,6 +11,8 @@ const generateQAndAdata = require("../../controllers/demo/genrateQuestionsAnswer
 const generateQAndAdataStatus = require("../../controllers/demo/updateQAStatus.controller")
 const submitFinalQuestionsAnswers = require("../../controllers/demo/submitFinalQA.controller")
 const submitFinalQAWhyData = require("../../controllers/demo/submitFinalQAwhydata")
+const demoClientCron = require("../../controllers/demo/clientCrone.controller")
+
 
 
 
@@ -30,6 +32,11 @@ router.post("/clients/generate-q-and-a", generateQAndAdata.generateQAndA);
 router.post("/clients/generate-q-and-a-status", generateQAndAdataStatus.updateQAStatus);
 router.post("/clients/submit-final-q-and-a", submitFinalQuestionsAnswers.updateFinalData);
 router.post("/clients/submit-final-why-data", submitFinalQAWhyData.submitFinalWhyData);
+
+
+//CRON API
+router.get("/clients/cron/update-status", demoClientCron.clientCrone);
+
 
 
 
