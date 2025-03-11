@@ -12,10 +12,10 @@ exports.clientCrone = async (req, res) => {
 
     console.log(`Updated ${result.modifiedCount} documents to Expired status.`);
 
-    res.status(200).json({
-      message: "Cron job executed successfully",
-      updatedRecords: result.modifiedCount || 0,
-    });
+//    res.status(200).json({
+//      message: "Cron job executed successfully",
+//      updatedRecords: result.modifiedCount || 0,
+//    });
   } catch (error) {
     console.error("Error updating expired clients:", error);
     res.status(500).json({ message: "Internal server error" });
