@@ -31,7 +31,7 @@ const registerDemoClientSchema = Joi.object({
   url: Joi.string().optional(),
   title: Joi.string().optional(),
   status: Joi.string()
-    .valid("Completed", "Active", "Expired")
+    .valid("Completed", "Active", "Expired", "Error")
     .default("Completed")
     .optional(),
 });
