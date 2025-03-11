@@ -50,6 +50,14 @@ exports.createOrUpdate = async (req, res) => {
         console.log("Scrape API called successfully.");
       } catch (scrapeError) {
         console.error("Error calling scrape API:", scrapeError);
+        const client = await DemoClient.findById(id);
+        client.status = "Error";
+        await client.save();
+        return res.status(500).json({
+          status: false,
+          message: "Something went wrong from AI.",
+          data: null,
+        });
       }
 
       return res.status(200).json({

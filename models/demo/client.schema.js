@@ -33,7 +33,7 @@ const demoClientSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["Completed", "Active", "Expired"],
+      enum: ["Completed", "Active", "Expired", "Error"],
       default: "Completed",
     },
     data_cleaned_status: {
