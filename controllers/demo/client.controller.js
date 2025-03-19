@@ -39,27 +39,27 @@ exports.createOrUpdate = async (req, res) => {
       }
 
       // After updating, call the scrape API
-      try {
-        const apiUrl = aiApiUrls.scrape_data;
-        await axios.post(apiUrl, {
-          id: updatedClient._id.toString(),
-          url: updatedClient.url,
-          term: updatedClient.title,
-        });
+  //     try {
+  //       const apiUrl = aiApiUrls.scrape_data;
+  //       await axios.post(apiUrl, {
+  //         id: updatedClient._id.toString(),
+  //         url: updatedClient.url,
+  //         term: updatedClient.title,
+  //       });
 
-        console.log("Scrape API called successfully.");
-      } catch (scrapeError) {
-        console.error("Error calling scrape API:", scrapeError);
-        const client = await DemoClient.findById(id);
-        client.status = "Error";
-	client.data_cleaned_status = "Error";
-        await client.save();
-        return res.status(200).json({
-          status: false,
-          message: "Something went wrong from AI.",
-          data: null,
-        });
-      }
+  //       console.log("Scrape API called successfully.");
+  //     } catch (scrapeError) {
+  //       console.error("Error calling scrape API:", scrapeError);
+  //       const client = await DemoClient.findById(id);
+  //       client.status = "Error";
+	// client.data_cleaned_status = "Error";
+  //       await client.save();
+  //       return res.status(200).json({
+  //         status: false,
+  //         message: "Something went wrong from AI.",
+  //         data: null,
+  //       });
+  //     }
 
       return res.status(200).json({
         status: true,
