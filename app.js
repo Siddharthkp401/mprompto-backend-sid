@@ -42,7 +42,7 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/track", trackLogRoutes);
 
 
-cron.schedule("*/1 * * * *", async () => {
+cron.schedule("0 * * * *", async () => {
   await clientCrone();
 });
 
