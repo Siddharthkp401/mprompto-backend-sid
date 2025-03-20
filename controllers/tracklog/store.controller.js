@@ -17,7 +17,7 @@ exports.store = async (req, res) => {
     const domain = new URL(referer).hostname.replace(/^www\./, ''); // Remove www if exists
 
     // 2️⃣ Create folder with domain/subdomain name
-    const baseDir = path.join('logs', domain);
+    const baseDir = path.join('public/logs', domain);
     if (!fs.existsSync(baseDir)) {
       fs.mkdirSync(baseDir, { recursive: true });
     }
