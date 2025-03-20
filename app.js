@@ -9,6 +9,7 @@ const connectDB = require("./config/db");
 const userRoutes = require("./routes/v1/userRoutes");
 const demoRoutes = require("./routes/v1/demoRoutes");
 const adminRoutes = require("./routes/v1/adminRoutes")
+const trackLogRoutes = require("./routes/v1/trackLogRoutes");
 require("dotenv").config();
 
 const cron = require("node-cron");
@@ -37,7 +38,8 @@ connectDB();
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/demo", demoRoutes);
-app.use("/api/v1/admin", adminRoutes)
+app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/track", trackLogRoutes);
 
 
 cron.schedule("*/1 * * * *", async () => {
