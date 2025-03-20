@@ -39,9 +39,6 @@ exports.store = async (req, res) => {
 
     // 6️⃣ Create log entry for the request
     const logData = {
-      timestamp: new Date().toISOString(),
-      method: req.method,
-      url: req.url,
       body: req.body || {},
     };
 
@@ -59,12 +56,7 @@ exports.store = async (req, res) => {
     // ✅ Response
     return res.status(200).json({
       status: true,
-      message: 'Log stored successfully.',
-      data: {
-        domain,
-        dateFolder,
-        ipAddress,
-      },
+      message: 'Success',
     });
   } catch (err) {
     console.error('Error storing track log:', err);
