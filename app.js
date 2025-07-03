@@ -1,5 +1,3 @@
-const https = require('https');
-const fs = require('fs');
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -15,13 +13,13 @@ require("dotenv").config();
 const cron = require("node-cron");
 const { clientCrone } = require("./controllers/demo/clientCrone.controller");
 
-const privateKey = fs.readFileSync('private.key');
-const certificate = fs.readFileSync('certificate.crt');
+// const privateKey = fs.readFileSync('private.key');
+// const certificate = fs.readFileSync('certificate.crt');
 
-const credentials = {
-  key: privateKey,
-  cert: certificate,
-};
+// const credentials = {
+//   key: privateKey,
+//   cert: certificate,
+// };
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -46,8 +44,8 @@ cron.schedule("0 * * * *", async () => {
   await clientCrone();
 });
 
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-const httpsServer = https.createServer(credentials, app);
-httpsServer.listen(PORT);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+// const httpsServer = https.createServer(credentials, app);
+// httpsServer.listen(PORT);
