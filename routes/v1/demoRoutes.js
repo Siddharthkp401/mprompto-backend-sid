@@ -12,6 +12,8 @@ const generateQAndAdataStatus = require("../../controllers/demo/updateQAStatus.c
 const submitFinalQuestionsAnswers = require("../../controllers/demo/submitFinalQA.controller")
 const submitFinalQAWhyData = require("../../controllers/demo/submitFinalQAwhydata")
 const demoClientCron = require("../../controllers/demo/clientCrone.controller")
+const getNugdes = require("../../controllers/demo/getNugdes.controller")
+const submitNugde = require("../../controllers/demo/submitAnswer.controller")
 
 
 
@@ -22,6 +24,8 @@ router.get("/clients/get", getClientController.getClients);
 router.post("/clients/demo-login", democlientLogin.clientLogin)
 router.post("/clients/resend-otp", clientresendOtp.resendOtp)
 router.post("/clients/verify-otp", clientverifyOtp.verifyOtp)
+router.get("/clients/get-nudges", getNugdes.getNudges)
+router.post("/clients/submit-answer", submitNugde.submitAnswer)
 
 
 
